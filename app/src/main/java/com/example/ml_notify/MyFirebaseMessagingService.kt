@@ -28,7 +28,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     // 子コルーチンと分離させる
     private val serviceJob = SupervisorJob()
-    private val serviceScope = CoroutineScope(Dispatchers.Default + serviceJob)
+    private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
 
     override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
@@ -42,7 +42,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // データメッセージが受信されたか
         if (remoteMessage.data.isNotEmpty()) {
-            Log.d(TAG, "Message data payload: ${remoteMessage.data}")")
+            Log.d(TAG, "Message data payload: ${remoteMessage.data}")
 
             // 今回は即時処理が想定されるため scheduleJob() は省略
             handleNow(remoteMessage.data)
@@ -64,7 +64,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private fun handleNow(data: Map<String, String>) {
         Log.d(TAG, "Handling message now using injected TaskDataHandler...")
 
-        seviceScope.launch {
+        serviceScope.launch {
             try {
                 taskDataHandler.handleTaskData(data)
             } catch (e: Exception) {
