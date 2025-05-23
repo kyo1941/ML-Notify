@@ -44,8 +44,8 @@ class TaskDataHandlerImpl @Inject constructor(
     }
 
     private fun sendNotification(title: String, body: String) {
-        val channelId = "ML-Notification-Channel"
-        val channelName = "ML Task Updates"
+        val channelId = appContext.getString(R.string.ml_notification_channel_id)
+        val channelName = appContext.getString(R.string.ml_notification_channel_name)
 
         // Android 0 (API 26) 以上では通知チャンネルの作成が必要
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
