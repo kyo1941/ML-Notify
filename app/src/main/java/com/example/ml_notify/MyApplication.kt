@@ -4,7 +4,7 @@ import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 import android.util.Log
 
-//
+// アプリケーション単位でHiltを有効化する
 @HiltAndroidApp
 class MyApplication : Application() {
     override fun onCreate() {
