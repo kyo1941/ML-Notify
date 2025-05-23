@@ -39,7 +39,7 @@ class TaskDataHandlerImpl @Inject constructor(
         if (title != null && body != null) {
             sendNotification(title, body)
         } else {
-            Log.e(TAG, "title is ${if (title == null) "null" else "exist"}. body is ${if (body == null) "null" else "exist")}")
+            Log.e(TAG, "title is ${if (title == null) "null" else "exist"}. body is ${if (body == null) "null" else "exist"}")
         }
     }
 
