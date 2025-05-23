@@ -60,7 +60,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // TODO: サーバーにトークンを送信するロジックの実装
     }
 
-    //
     private fun handleNow(data: Map<String, String>) {
         Log.d(TAG, "Handling message now using injected TaskDataHandler...")
 
