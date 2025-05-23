@@ -36,14 +36,14 @@ class TaskDataHandlerImpl @Inject constructor(
         Log.i(TAG, "FCM Data processed: ID=$processId, Status=$status, Title=$title")
 
         // 基本的にサーバー側でnullにならないように管理しておく
-        if (title != null && body != null) {
-            sendNotification(title, body)
+        if (processId != null && title != null && body != null) {
+            sendNotification(processId, title, body)
         } else {
-            Log.e(TAG, "title is ${if (title == null) "null" else "exist"}. body is ${if (body == null) "null" else "exist"}")
+            Log.e(TAG, "processId is ${if (processId == null) "null" else "exist"}, title is ${if (title == null) "null" else "exist"}. body is ${if (body == null) "null" else "exist"}")
         }
     }
 
-    private fun sendNotification(title: String, body: String) {
+    private fun sendNotification(processId: String, title: String, body: String) {
         val channelId = appContext.getString(R.string.ml_notification_channel_id)
         val channelName = appContext.getString(R.string.ml_notification_channel_name)
 
@@ -70,7 +70,7 @@ class TaskDataHandlerImpl @Inject constructor(
 
         // TODO: タップ時に指定の画面をタスク詳細画面に遷移できるようにする
 
-        notificationManager.notify(System.currentTimeMillis().toInt(), notificationBuilder.build())
+        notificationManager.notify(processId.hashCode(), notificationBuilder.build())
         Log.d(TAG, "Notification displayed: '$title' - '$body'")
     }
 }
