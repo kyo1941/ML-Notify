@@ -42,7 +42,9 @@ object DatabaseModule {
             AppDatabase::class.java,
             "app_database"
         )
-            .addMigrations()
+            // TODO: アプリが完成したらこっちに移行して拡張性をもたせる
+            //.addMigrations()
+            .fallbackToDestructiveMigration()
             .build()
     }
 
