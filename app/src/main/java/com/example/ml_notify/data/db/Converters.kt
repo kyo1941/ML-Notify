@@ -11,8 +11,9 @@ class Converters {
         return value?.name
     }
 
+    // StringからTaskStatusを取得する
     @TypeConverter
     fun toTaskStatus(value: String?): TaskStatus? {
-        return value?.let { TaskStatus.valueOf(it) }
+        return value?.let { statusName -> TaskStatus.values().find { it.name == statusName } }
     }
 }
