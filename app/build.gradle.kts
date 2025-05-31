@@ -45,6 +45,8 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.dagger:hilt-android:2.56.2")
     ksp("com.google.dagger:hilt-android-compiler:2.56.2")
+    ksp("androidx.room:room-compiler:2.7.1")
+    implementation("androidx.room:room-ktx:2.7.1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
