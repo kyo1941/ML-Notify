@@ -50,6 +50,7 @@ object DatabaseModule {
 
     // HiltでTaskDaoのインスタンスを管理できるようにする
     @Provides
+    @Singleton
     fun provideTaskDao(appDatabase: AppDatabase): TaskDao {
         return appDatabase.taskDao()
     }
