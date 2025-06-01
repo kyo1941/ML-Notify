@@ -23,7 +23,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ml_notify.ui.theme.button_bg_color
 import com.example.ml_notify.ui.theme.button_fg_color
 import com.example.ml_notify.ui.theme.border_color
-import com.example.ml_notify.ui.main.MainViewModel
 
 @Composable
 fun MainScreen(
