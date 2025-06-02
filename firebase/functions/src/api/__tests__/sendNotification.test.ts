@@ -100,7 +100,7 @@ describe('sendNotification Cloud Function', () => {
           }),
         }));
         expect(logger.info).toHaveBeenCalledWith('Attempting to send FCM message:', expect.any(Object));
-        expect(logger.info).toHaveBeenCalledWith(`Successgully sent message for processId testProcessId:`, mockFcmResponse);
+        expect(logger.info).toHaveBeenCalledWith(`Successfully sent message for processId testProcessId:`, mockFcmResponse);
       });
     });
 

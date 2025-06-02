@@ -113,7 +113,7 @@ export const sendNotification = onRequest (
         // FCMメッセージの送信
         try {
             const fcmResponse = await admin.messaging().send(fcmMessagePayload);
-            logger.info(`Successgully sent message for processId ${processId}:`, fcmResponse);
+            logger.info(`Successfully sent message for processId ${processId}:`, fcmResponse);
             response.status(200).send({ success: true, messageId: fcmResponse });
         } catch (error: any) {
             logger.error(`Error sending FCM message for processId ${processId}:`, error, {
