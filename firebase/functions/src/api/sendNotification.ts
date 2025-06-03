@@ -1,8 +1,8 @@
-import { SendNotificationRequestBody } from "./types";
 import {onRequest} from "firebase-functions/v2/https";
 import {defineString} from "firebase-functions/params";
 import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
+import { z } from "zod";
 
 // 環境変数からAPIキーを取得
 const API_KEY_PARAM = defineString("MYFUNCTION_APIKEY", {
@@ -53,24 +53,28 @@ export const sendNotification = onRequest (
         }
 
         // リクエストボディから必要なデータを取得
-        const {
-            processId,
-            status,
-            messageTitle,
-            messageBody,
-            deviceToken,
-            taskName,
-        } = request.body as SendNotificationRequestBody;
+        // Zodスキーマ定義
+        const requestBodySchema = z.object({
+            processId: z.string(),
+            status: z.enum(["START", "FINISH"]),
+            deviceToken: z.string(),
+            messageTitle: z.string().optional(),
+            messageBody: z.string().optional(),
+            taskName: z.string().optional(),
+        });
 
-        // 必須パラメータのチェック (processId, status, deviceToken)
-        if (!processId || !status || !deviceToken) {
-            logger.error("Missing required fields in request body:", request.body);
+        // リクエストボディのバリデーション
+        const parseResult = requestBodySchema.safeParse(request.body);
+        if (!parseResult.success) {
+            logger.error("Invalid request body:", parseResult.error.flatten());
             response.status(400).send({
-            success: false,
-            error: "Bad Request: Missing one or more required fields (processId, status, deviceToken).",
+                success: false,
+                error: "Bad Request: Invalid request body.",
+                details: parseResult.error.flatten(),
             });
             return;
         }
+        const { processId, status, messageTitle, messageBody, deviceToken, taskName } = parseResult.data;
 
         // 時刻情報のサーバーサイドでの生成・割り当て
         const currentTimeString = new Date().getTime().toString();

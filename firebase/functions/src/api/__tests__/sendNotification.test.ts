@@ -145,22 +145,40 @@ describe('sendNotification Cloud Function', () => {
         delete mockReq.body.processId;
         await sendNotification(mockReq, mockRes);
         expect(mockRes.status).toHaveBeenCalledWith(400);
-        expect(mockRes.send).toHaveBeenCalledWith(expect.objectContaining({ error: 'Bad Request: Missing one or more required fields (processId, status, deviceToken).' }));
-        expect(logger.error).toHaveBeenCalledWith("Missing required fields in request body:", mockReq.body);
+        expect(mockRes.send).toHaveBeenCalledWith(
+          expect.objectContaining({
+            error: 'Bad Request: Invalid request body.',
+            details: expect.any(Object),
+          })
+        );
+        expect(logger.error).toHaveBeenCalledWith(
+          'Invalid request body:',
+          expect.any(Object)
+        );
       });
 
       it('should return 400 if status is missing', async () => {
         delete mockReq.body.status;
         await sendNotification(mockReq, mockRes);
         expect(mockRes.status).toHaveBeenCalledWith(400);
-        expect(mockRes.send).toHaveBeenCalledWith(expect.objectContaining({ error: 'Bad Request: Missing one or more required fields (processId, status, deviceToken).' }));
+        expect(mockRes.send).toHaveBeenCalledWith(
+          expect.objectContaining({
+            error: 'Bad Request: Invalid request body.',
+            details: expect.any(Object),
+          })
+        );
       });
 
       it('should return 400 if deviceToken is missing', async () => {
         delete mockReq.body.deviceToken;
         await sendNotification(mockReq, mockRes);
         expect(mockRes.status).toHaveBeenCalledWith(400);
-        expect(mockRes.send).toHaveBeenCalledWith(expect.objectContaining({ error: 'Bad Request: Missing one or more required fields (processId, status, deviceToken).' }));
+        expect(mockRes.send).toHaveBeenCalledWith(
+          expect.objectContaining({
+            error: 'Bad Request: Invalid request body.',
+            details: expect.any(Object),
+          })
+        );
       });
     });
 
@@ -275,16 +293,17 @@ describe('sendNotification Cloud Function', () => {
       });
 
       it('should not include taskActualStartTime or taskActualCompletionTime when status is neither START nor FINISH', async () => {
-        mockReq.body.status = 'PENDING';
-        mockSend.mockResolvedValue({ messageId: 'fcm-success-pending' });
-
+        mockReq.body.status = 'UNKNOWN';
         await sendNotification(mockReq, mockRes);
-
-        expect(mockRes.status).toHaveBeenCalledWith(200);
-        expect(mockSend).toHaveBeenCalledTimes(1);
-        const sentData = mockSend.mock.calls[0][0].data;
-        expect(sentData.taskActualStartTime).toBeUndefined();
-        expect(sentData.taskActualCompletionTime).toBeUndefined();
+        expect(mockRes.status).toHaveBeenCalledWith(400);
+        expect(mockRes.send).toHaveBeenCalledWith(
+          expect.objectContaining({
+            error: 'Bad Request: Invalid request body.',
+            details: expect.any(Object),
+          })
+        );
+        // FCM送信は呼ばれない
+        expect(mockSend).not.toHaveBeenCalled();
       });
     });
 });
