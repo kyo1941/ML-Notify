@@ -48,9 +48,10 @@ headers = {
 # HTTP POST リクエストの送信
 try:
     print(f"Sending request to: {FUNCTION_URL}")
-    print(f"Headers: {headers}")
+    print(
+        f"Headers: {{'Content-Type': '{headers.get('Content-Type')}', 'Authorization': 'Bearer [REDACTED]'}}")
     print(f"Payload: {json.dumps(payload, indent=2)}")
- 
+
     response = requests.post(
         FUNCTION_URL, headers=headers, json=payload, timeout=10)
 
