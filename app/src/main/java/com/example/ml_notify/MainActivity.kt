@@ -6,7 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import com.example.ml_notify.ui.main.MainScreen
+import com.example.ml_notify.ui.main.TaskDetailScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState:   Bundle?) {
@@ -15,7 +19,11 @@ class MainActivity : ComponentActivity() {
             Surface(
                 modifier = Modifier.fillMaxSize()
             ) {
-                MainScreen()
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = "main") {
+                    composable("main") { MainScreen(navController = navController) }
+                    composable("taskDetail") { TaskDetailScreen() }
+                }
             }
         }
     }
