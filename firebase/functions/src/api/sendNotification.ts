@@ -1,3 +1,4 @@
+import { SendNotificationRequestBody } from "./types";
 import {onRequest} from "firebase-functions/v2/https";
 import {defineString} from "firebase-functions/params";
 import * as logger from "firebase-functions/logger";
@@ -59,7 +60,7 @@ export const sendNotification = onRequest (
             messageBody,
             deviceToken,
             taskName,
-        } = request.body;
+        } = request.body as SendNotificationRequestBody;
 
         // 必須パラメータのチェック (processId, status, deviceToken)
         if (!processId || !status || !deviceToken) {
@@ -77,11 +78,9 @@ export const sendNotification = onRequest (
         let taskActualCompletionTimeForPayload: string | undefined;
 
         // statusの値に基づいて開始時刻か終了時刻か割り当てる
-        const caseStatus = String(status);
-        
-        if (caseStatus === "START") {
+        if (status === "START") {
             taskActualStartTimeForPayload = currentTimeString;
-        } else if (caseStatus === "FINISH") {
+        } else if (status === "FINISH") {
             taskActualCompletionTimeForPayload = currentTimeString;
         }
 
