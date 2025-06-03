@@ -67,3 +67,6 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+# 呼び出しスクリプトの設定ファイル
+scripts/config.json
