@@ -5,7 +5,7 @@ import * as admin from "firebase-admin";
 import { z } from "zod";
 
 // 環境変数からAPIキーを取得
-const API_KEY_PARAM = defineString("MYFUNCTION_APIKEY", {
+const API_KEY_PARAM = defineString("SENDNOTIFICATION_APIKEY", {
     description: "API Key for authorizing requests to the sendNotification function.",
 });
 

@@ -32,7 +32,7 @@ jest.mock('firebase-functions/params', () => ({
 
 describe('sendNotification Cloud Function', () => {
   const VALID_API_KEY = 'test-api-key';
-  const ENV_API_KEY_NAME = 'MYFUNCTION_APIKEY';
+  const ENV_API_KEY_NAME = 'SENDNOTIFICATION_APIKEY';
   const MOCK_TIMESTAMP = 1678886400000;
   const MOCK_TIMESTAMP_STRING = String(MOCK_TIMESTAMP);
 
