@@ -2,7 +2,7 @@ import requests
 import json
 import os
 
-# github上で管理することを踏まえて，設定ファイルに保存しています
+# APIキー等の秘匿情報を含むためGit管理外とする設定ファイル
 CONFIG_FILE_PATH = os.path.join(os.path.dirname(__file__), "config.json")
 
 # 設定の読み込み
