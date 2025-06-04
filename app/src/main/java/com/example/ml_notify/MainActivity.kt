@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = "main") {
                     composable("main") { MainScreen(navController = navController) }
-                    composable("taskDetail") { TaskDetailScreen() }
+                    composable("taskDetail") { TaskDetailScreen(navController = navController) }
                 }
             }
         }
