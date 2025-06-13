@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ml_notify.navigation.AppNavHost
+import com.example.ml_notify.ui.main.MainViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,8 +18,9 @@ class MainActivity : ComponentActivity() {
             Surface(
                 modifier = Modifier.fillMaxSize()
             ) {
+                val mainViewModel: MainViewModel = viewModel()
                 val navController = rememberNavController()
-                AppNavHost(navController = navController)
+                AppNavHost(navController = navController, mainViewModel = mainViewModel)
             }
         }
     }
