@@ -22,14 +22,13 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ml_notify.navigation.AppRoutes
 import com.example.ml_notify.ui.theme.button_bg_color
 import com.example.ml_notify.ui.theme.button_fg_color
 import com.example.ml_notify.ui.theme.border_color
@@ -81,7 +80,7 @@ fun MainScreen(
                                 .height(24.dp),
                             onClick = {
                                 // TODO: 現在はindexを渡しているが，正式なprocessIdを引数に渡す
-                                navController.navigate("taskDetail/${index + 1}")
+                                navController.navigate("${AppRoutes.TASK_DETAIL_SCREEN}/${index + 1}")
                             }
                         ) {
                             Icon(
