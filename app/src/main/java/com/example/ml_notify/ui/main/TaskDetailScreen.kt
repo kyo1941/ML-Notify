@@ -27,12 +27,10 @@ import androidx.navigation.NavHostController
 
 @Composable
 fun TaskDetailScreen (
-    navController: NavHostController
-
-    // TODO: DBから取得したタスク情報を渡す
+    navController: NavHostController,
+    processId: String
 ) {
-
-    // TODO: DBから取得した情報を取得する．オプショナルなのでnull時は空白かヒントにしておく
+    // TODO: processIdを用いてDBから情報を取得する (更新のタイミングが悪いときにも対応できるように引数全体は渡さない)
     var message by remember { mutableStateOf("hogehoge") }
 
     Column (
@@ -58,7 +56,7 @@ fun TaskDetailScreen (
         Spacer(Modifier.weight(0.5f))
 
         // TODO: 渡されたタスク情報から取得したものを配置する
-        TaskSectionScreen(header = "タスク名", detail = "ここにタスク名が出力されます")
+        TaskSectionScreen(header = "タスク名($processId)", detail = "ここにタスク名が出力されます")
 
         Spacer(Modifier.padding(vertical = 32.dp))
 

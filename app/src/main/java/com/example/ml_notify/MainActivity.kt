@@ -9,11 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.example.ml_notify.ui.main.MainScreen
 import com.example.ml_notify.ui.main.TaskDetailScreen
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState:   Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             Surface(
@@ -22,7 +24,15 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = "main") {
                     composable("main") { MainScreen(navController = navController) }
-                    composable("taskDetail") { TaskDetailScreen(navController = navController) }
+
+                    composable(
+                        route = "taskDetail/{processId}",
+                        arguments = listOf(navArgument("processId") { type = NavType.StringType })
+                    ) { backStackEntry ->
+                        val processId = backStackEntry.arguments?.getString("processId")
+                            ?: throw IllegalArgumentException("[ERROR] processId is null")
+                        TaskDetailScreen(navController = navController, processId = processId)
+                    }
                 }
             }
         }
