@@ -49,7 +49,9 @@ fun MainScreen(
     Scaffold (
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        Column {
+        Column (
+            modifier = Modifier.padding(paddingValues)
+        ) {
 
             Text(
                 text = "タスク一覧",
