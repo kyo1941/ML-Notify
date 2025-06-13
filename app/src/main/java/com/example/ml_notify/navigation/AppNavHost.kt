@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.ml_notify.ui.main.MainScreen
-import com.example.ml_notify.ui.main.TaskDetailScreen
+import com.example.ml_notify.ui.task_detail.TaskDetailScreen
 
 @Composable
 fun AppNavHost (

@@ -1,4 +1,4 @@
-package com.example.ml_notify.ui.main
+package com.example.ml_notify.ui.task_detail
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
+import com.example.ml_notify.R
 
 @Composable
 fun TaskDetailScreen (
@@ -45,7 +46,7 @@ fun TaskDetailScreen (
                 }
             ) {
                 Icon(
-                    painter = painterResource(id = com.example.ml_notify.R.drawable.baseline_keyboard_arrow_left_24),
+                    painter = painterResource(id = R.drawable.baseline_keyboard_arrow_left_24),
                     contentDescription = "戻る"
                 )
             }
