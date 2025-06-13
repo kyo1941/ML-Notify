@@ -6,16 +6,21 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.ml_notify.ui.main.MainScreen
+import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ml_notify.navigation.AppNavHost
+import com.example.ml_notify.ui.main.MainViewModel
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState:   Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             Surface(
                 modifier = Modifier.fillMaxSize()
             ) {
-                MainScreen()
+                val mainViewModel: MainViewModel = viewModel()
+                val navController = rememberNavController()
+                AppNavHost(navController = navController, mainViewModel = mainViewModel)
             }
         }
     }
