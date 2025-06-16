@@ -1,6 +1,5 @@
 package com.example.ml_notify.ui.main
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -46,10 +45,10 @@ fun MainScreen(
         }
     }
 
-    Scaffold (
+    Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        Column (
+        Column(
             modifier = Modifier.padding(paddingValues)
         ) {
 
@@ -116,10 +115,8 @@ fun MainScreen(
                     contentColor = button_fg_color,
                     shape = RoundedCornerShape(24.dp),
                     onClick = {
-
-                        // TODO: タスク登録処理に置き換えること
-                        Log.d("MainScreen", "Button clicked")
-
+                        // TODO: タイトルに加えて概要を記入できるようなダイアログを表示させる
+                        mainViewModel.registerTask("テスト")
                     }
                 ) {
                     Icon(
