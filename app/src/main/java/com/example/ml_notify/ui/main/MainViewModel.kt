@@ -27,7 +27,7 @@ class MainViewModel @Inject constructor (
         viewModelScope.launch {
             val newTask = TaskEntity(
                 processId = UUID.randomUUID().toString(),
-                name = "test",
+                name = taskName,
                 status = TaskStatus.PENDING,
                 registeredAt = System.currentTimeMillis(),
                 startTime = null,
