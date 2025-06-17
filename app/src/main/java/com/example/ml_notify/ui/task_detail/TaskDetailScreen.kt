@@ -61,18 +61,16 @@ fun TaskDetailScreen (
 
         Spacer(Modifier.weight(0.5f))
 
-        // TODO: 渡されたタスク情報から取得したものを配置する
-        TaskSectionScreen(header = "タスク名($processId)", detail = "ここにタスク名が出力されます")
+        TaskSectionScreen(header = "タスク名\n(ID: $processId)", detail = "${task?.name ?: "取得できませんでした"}")
 
         Spacer(Modifier.padding(vertical = 32.dp))
 
-        // TODO: 渡されたタスク情報から取得したものを配置する
-        TaskSectionScreen(header = "現在の状態", detail = "ここに現在の状態が出力されます")
+        TaskSectionScreen(header = "現在の状態", detail = "${task?.status ?: "取得できませんでした"}")
 
         Spacer(Modifier.padding(vertical = 8.dp))
 
         Text(
-            text = "開始時刻 or 終了時刻: hogehoge",
+            text = "開始時刻 or 終了時刻: ${task?.startTime ?: "取得できませんでした"}",
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             color = Color.Gray
@@ -95,7 +93,6 @@ fun TaskDetailScreen (
 
         Spacer(Modifier.padding(vertical = 16.dp))
 
-        // TODO: 渡されたタスク情報から取得したものを配置する．オプショナルなので書き込んだのち保存する
         TextField(
             value = message ?: "",
             onValueChange = { taskDetailViewModel.updateMessage(it) },
