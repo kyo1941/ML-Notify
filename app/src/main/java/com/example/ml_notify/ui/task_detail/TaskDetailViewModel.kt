@@ -33,7 +33,7 @@ class TaskDetailViewModel @Inject constructor(
 
     fun fetchTask(processId: String) {
         viewModelScope.launch {
-            val taskEntity = taskRepository.getTasksById(processId)
+            val taskEntity = taskRepository.getTaskById(processId)
             _task.value = taskEntity
             _message.value = taskEntity?.message ?: ""
         }
