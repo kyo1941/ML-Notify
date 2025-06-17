@@ -60,6 +60,7 @@ class MainViewModel @Inject constructor (
                     message = taskMessage
                 )
                 taskRepository.insertTask(newTask)
+                fetchTasks()
                 showSnackbar("タスク $taskName が登録されました")
                 _registerEvent.emit(Unit)
             } catch (e: Exception) {
