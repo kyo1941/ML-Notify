@@ -98,7 +98,7 @@ fun TaskDetailScreen (
         // TODO: 渡されたタスク情報から取得したものを配置する．オプショナルなので書き込んだのち保存する
         TextField(
             value = message ?: "",
-            onValueChange = { message = it },
+            onValueChange = { taskDetailViewModel.updateMessage(it) },
             modifier = Modifier.fillMaxWidth(0.8f).align(Alignment.CenterHorizontally)
         )
 

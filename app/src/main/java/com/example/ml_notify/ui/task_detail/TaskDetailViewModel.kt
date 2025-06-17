@@ -27,4 +27,18 @@ class TaskDetailViewModel @Inject constructor(
             _message.value = taskEntity?.message ?: ""
         }
     }
+
+    fun updateMessage(newMessage: String) {
+        _message.value = newMessage.ifEmpty { null }
+        saveTask()
+    }
+
+    private fun saveTask() {
+        val currentTask = _task.value ?: return
+        viewModelScope.launch {
+            taskRepository.updateTask(
+                currentTask.copy(message = _message.value)
+            )
+        }
+    }
 }
