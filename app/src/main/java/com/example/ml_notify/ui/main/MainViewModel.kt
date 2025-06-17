@@ -23,7 +23,7 @@ class MainViewModel @Inject constructor (
         _snackbarEvent.emit(message)
     }
 
-    fun registerTask(taskName: String) {
+    fun registerTask(taskName: String, taskMessage: String?) {
         viewModelScope.launch {
             val newTask = TaskEntity(
                 processId = UUID.randomUUID().toString(),
@@ -31,7 +31,7 @@ class MainViewModel @Inject constructor (
                 status = TaskStatus.PENDING,
                 registeredAt = System.currentTimeMillis(),
                 startTime = null,
-                message = null
+                message = taskMessage
             )
 
             taskRepository.insertTask(newTask)

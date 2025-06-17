@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.FloatingActionButton
@@ -19,13 +20,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TextField
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ml_notify.navigation.AppRoutes
 import com.example.ml_notify.ui.theme.button_bg_color
@@ -38,6 +43,10 @@ fun MainScreen(
     mainViewModel: MainViewModel
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val showDialog = remember { mutableStateOf(false) }
+    val taskName = remember { mutableStateOf("") }
+    val taskMessage = remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         mainViewModel.snackbarEvent.collect { message ->
@@ -115,8 +124,7 @@ fun MainScreen(
                     contentColor = button_fg_color,
                     shape = RoundedCornerShape(24.dp),
                     onClick = {
-                        // TODO: タイトルに加えて概要を記入できるようなダイアログを表示させる
-                        mainViewModel.registerTask("テスト")
+                        showDialog.value = true
                     }
                 ) {
                     Icon(
@@ -131,5 +139,58 @@ fun MainScreen(
             }
             Spacer(Modifier.height(24.dp))
         }
+    }
+
+    if (showDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showDialog.value = false },
+            title = {
+                Text("タスクの登録")
+            },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = taskName.value,
+                        onValueChange = { taskName.value = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = {
+                            Text(
+                                text = "タスク名",
+                                fontSize = 12.sp
+                            )
+                        }
+                    )
+
+                    Spacer(Modifier.height(24.dp))
+
+                    OutlinedTextField(
+                        // nullのときは空文字列で表示しておいて，その時はnullとして渡せるようにする
+                        value = taskMessage.value ?: "",
+                        onValueChange = { taskMessage.value = it.ifEmpty { null } },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = {
+                            Text(
+                                text = "説明",
+                                fontSize = 12.sp
+                            )
+                        }
+                    )
+                }
+            },
+            confirmButton = {
+                IconButton(onClick = {
+                    mainViewModel.registerTask(taskName.value, taskMessage.value)
+                    showDialog.value = false
+                    taskName.value = ""
+                }) {
+                    Text("登録")
+                }
+            },
+            dismissButton = {
+                IconButton(onClick = { showDialog.value = false }) {
+                    Text("キャンセル")
+                }
+            }
+        )
     }
 }
