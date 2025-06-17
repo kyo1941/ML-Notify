@@ -156,7 +156,7 @@ fun MainScreen(
                         label = {
                             Text(
                                 text = "タスク名",
-                                fontSize = 12.sp
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
                     )
@@ -170,8 +170,8 @@ fun MainScreen(
                         modifier = Modifier.fillMaxWidth(),
                         label = {
                             Text(
-                                text = "説明",
-                                fontSize = 12.sp
+                                text = "説明（任意）",
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
                     )
