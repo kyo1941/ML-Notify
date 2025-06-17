@@ -1,5 +1,6 @@
 package com.example.ml_notify.ui.task_detail
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -33,9 +34,13 @@ class TaskDetailViewModel @Inject constructor(
 
     fun fetchTask(processId: String) {
         viewModelScope.launch {
-            val taskEntity = taskRepository.getTaskById(processId)
-            _task.value = taskEntity
-            _message.value = taskEntity?.message ?: ""
+            try {
+                val taskEntity = taskRepository.getTaskById(processId)
+                _task.value = taskEntity
+                _message.value = taskEntity?.message ?: ""
+            } catch (e: Exception) {
+                Log.e("TaskDetailViewModel", "タスクの取得に失敗しました", e)
+            }
         }
     }
 
@@ -46,9 +51,13 @@ class TaskDetailViewModel @Inject constructor(
     private fun saveTask() {
         val currentTask = _task.value ?: return
         viewModelScope.launch {
-            taskRepository.updateTask(
-                currentTask.copy(message = _message.value)
-            )
+            try {
+                taskRepository.updateTask(
+                    currentTask.copy(message = _message.value)
+                )
+            } catch (e: Exception) {
+                Log.e("TaskDetailViewModel", "タスクの保存に失敗しました", e)
+            }
         }
     }
 }
