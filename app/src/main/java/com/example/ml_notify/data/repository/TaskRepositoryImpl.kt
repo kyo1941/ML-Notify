@@ -19,4 +19,8 @@ class TaskRepositoryImpl @Inject constructor(
     override suspend fun deleteTask(task: TaskEntity) {
         taskDao.delete(task)
     }
+
+    override suspend fun getAllTasks(): List<TaskEntity> {
+        return taskDao.getAllTasks()
+    }
 }
