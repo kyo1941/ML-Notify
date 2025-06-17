@@ -52,9 +52,9 @@ class TaskDetailViewModel @Inject constructor(
         val currentTask = _task.value ?: return
         viewModelScope.launch {
             try {
-                taskRepository.updateTask(
-                    currentTask.copy(message = _message.value)
-                )
+                val updatedTask = currentTask.copy(message = _message.value)
+                taskRepository.updateTask(updatedTask)
+                _task.value = updatedTask
             } catch (e: Exception) {
                 Log.e("TaskDetailViewModel", "タスクの保存に失敗しました", e)
             }
