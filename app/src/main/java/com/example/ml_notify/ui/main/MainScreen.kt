@@ -24,6 +24,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ml_notify.navigation.AppRoutes
 import com.example.ml_notify.ui.theme.button_bg_color
 import com.example.ml_notify.ui.theme.button_fg_color
@@ -39,13 +42,15 @@ import com.example.ml_notify.ui.theme.border_color
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     val showDialog = remember { mutableStateOf(false) }
     val taskName = remember { mutableStateOf("") }
     val taskMessage = remember { mutableStateOf<String?>(null) }
+
+    val tasks by mainViewModel.tasks.collectAsState()
 
     LaunchedEffect(Unit) {
         mainViewModel.snackbarEvent.collect { message ->
@@ -75,20 +80,17 @@ fun MainScreen(
                 modifier = Modifier.padding(32.dp)
             )
 
-            // TODO: DBから取得したリストに置き換えること
-            val dummyList = List(5) { index -> "Item No. ${index + 1}" }
-
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 8.dp)
             ) {
-                itemsIndexed(dummyList) { index, item ->
+                itemsIndexed(tasks, key = {_, task -> task.processId}) { index, task ->
                     Row(
                         modifier = Modifier.padding(16.dp)
                     ) {
                         Text(
-                            text = item
+                            text = task.name
                         )
                         Spacer(Modifier.weight(1f))
                         IconButton(
@@ -96,8 +98,7 @@ fun MainScreen(
                                 .width(24.dp)
                                 .height(24.dp),
                             onClick = {
-                                // TODO: 現在はindexを渡しているが，正式なprocessIdを引数に渡す
-                                navController.navigate("${AppRoutes.TASK_DETAIL_SCREEN}/${index + 1}")
+                                navController.navigate("${AppRoutes.TASK_DETAIL_SCREEN}/${task.processId}")
                             }
                         ) {
                             Icon(
@@ -110,7 +111,7 @@ fun MainScreen(
                         }
                         Spacer(Modifier.width(8.dp))
                     }
-                    if (index < dummyList.lastIndex) {
+                    if (index < tasks.lastIndex) {
                         HorizontalDivider(
                             color = border_color,
                             thickness = 1.dp

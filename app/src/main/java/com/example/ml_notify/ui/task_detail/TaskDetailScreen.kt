@@ -12,9 +12,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
@@ -24,15 +23,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ml_notify.R
 
 @Composable
 fun TaskDetailScreen (
     navController: NavHostController,
-    processId: String
+    processId: String,
+    taskDetailViewModel: TaskDetailViewModel = hiltViewModel()
 ) {
-    // TODO: processIdを用いてDBから情報を取得する (更新のタイミングが悪いときにも対応できるように引数全体は渡さない)
-    var message by remember { mutableStateOf("hogehoge") }
+    val task by taskDetailViewModel.task.collectAsState()
+    val message by taskDetailViewModel.message.collectAsState()
+
+    LaunchedEffect(processId) {
+        taskDetailViewModel.fetchTask(processId)
+    }
 
     Column (
         modifier = Modifier
@@ -56,18 +61,16 @@ fun TaskDetailScreen (
 
         Spacer(Modifier.weight(0.5f))
 
-        // TODO: 渡されたタスク情報から取得したものを配置する
-        TaskSectionScreen(header = "タスク名($processId)", detail = "ここにタスク名が出力されます")
+        TaskSectionScreen(header = "タスク名\n(ID: $processId)", detail = "${task?.name ?: "取得できませんでした"}")
 
         Spacer(Modifier.padding(vertical = 32.dp))
 
-        // TODO: 渡されたタスク情報から取得したものを配置する
-        TaskSectionScreen(header = "現在の状態", detail = "ここに現在の状態が出力されます")
+        TaskSectionScreen(header = "現在の状態", detail = "${task?.status ?: "取得できませんでした"}")
 
         Spacer(Modifier.padding(vertical = 8.dp))
 
         Text(
-            text = "開始時刻 or 終了時刻: hogehoge",
+            text = "開始時刻 or 終了時刻: ${task?.startTime ?: "取得できませんでした"}",
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             color = Color.Gray
@@ -90,10 +93,9 @@ fun TaskDetailScreen (
 
         Spacer(Modifier.padding(vertical = 16.dp))
 
-        // TODO: 渡されたタスク情報から取得したものを配置する．オプショナルなので書き込んだのち保存する
         TextField(
-            value = message,
-            onValueChange = { message = it },
+            value = message ?: "",
+            onValueChange = { taskDetailViewModel.updateMessage(it) },
             modifier = Modifier.fillMaxWidth(0.8f).align(Alignment.CenterHorizontally)
         )
 

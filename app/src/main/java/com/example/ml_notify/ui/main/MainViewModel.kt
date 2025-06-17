@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import java.util.UUID
@@ -23,6 +25,25 @@ class MainViewModel @Inject constructor (
     private val _registerEvent = MutableSharedFlow<Unit>()
     val registerEvent = _registerEvent.asSharedFlow()
 
+    private val _tasks = MutableStateFlow<List<TaskEntity>>(emptyList())
+    val tasks = _tasks.asStateFlow()
+
+    init {
+        fetchTasks()
+    }
+
+    private fun fetchTasks() {
+        viewModelScope.launch {
+            try {
+                val taskList = taskRepository.getAllTasks()
+                _tasks.value = taskList
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "タスクの取得に失敗しました", e)
+                showSnackbar("タスクの取得に失敗しました")
+            }
+        }
+    }
+
     suspend fun showSnackbar(message: String) {
         _snackbarEvent.emit(message)
     }
@@ -39,6 +60,7 @@ class MainViewModel @Inject constructor (
                     message = taskMessage
                 )
                 taskRepository.insertTask(newTask)
+                fetchTasks()
                 showSnackbar("タスク $taskName が登録されました")
                 _registerEvent.emit(Unit)
             } catch (e: Exception) {
