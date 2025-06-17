@@ -1,6 +1,5 @@
 package com.example.ml_notify.ui.main
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,8 +10,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -20,9 +21,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
@@ -40,16 +43,28 @@ fun MainScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val showDialog = remember { mutableStateOf(false) }
+    val taskName = remember { mutableStateOf("") }
+    val taskMessage = remember { mutableStateOf<String?>(null) }
+
     LaunchedEffect(Unit) {
         mainViewModel.snackbarEvent.collect { message ->
             snackbarHostState.showSnackbar(message)
         }
     }
 
-    Scaffold (
+    LaunchedEffect(Unit) {
+        mainViewModel.registerEvent.collect {
+            showDialog.value = false
+            taskName.value = ""
+            taskMessage.value = null
+        }
+    }
+
+    Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        Column (
+        Column(
             modifier = Modifier.padding(paddingValues)
         ) {
 
@@ -116,10 +131,7 @@ fun MainScreen(
                     contentColor = button_fg_color,
                     shape = RoundedCornerShape(24.dp),
                     onClick = {
-
-                        // TODO: タスク登録処理に置き換えること
-                        Log.d("MainScreen", "Button clicked")
-
+                        showDialog.value = true
                     }
                 ) {
                     Icon(
@@ -134,5 +146,59 @@ fun MainScreen(
             }
             Spacer(Modifier.height(24.dp))
         }
+    }
+
+    if (showDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showDialog.value = false },
+            title = {
+                Text("タスクの登録")
+            },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = taskName.value,
+                        onValueChange = { taskName.value = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = {
+                            Text(
+                                text = "タスク名",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    )
+
+                    Spacer(Modifier.height(24.dp))
+
+                    OutlinedTextField(
+                        // nullのときは空文字列で表示しておいて，その時はnullとして渡せるようにする
+                        value = taskMessage.value ?: "",
+                        onValueChange = { taskMessage.value = it.ifEmpty { null } },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = {
+                            Text(
+                                text = "説明（任意）",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        mainViewModel.registerTask(taskName.value, taskMessage.value)
+                    },
+                    enabled = taskName.value.isNotBlank()
+                ) {
+                    Text("登録")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog.value = false }) {
+                    Text("キャンセル")
+                }
+            }
+        )
     }
 }
