@@ -84,7 +84,7 @@ fun MainScreen(
                     .weight(1f)
                     .padding(horizontal = 8.dp)
             ) {
-                itemsIndexed(tasks) { index, task ->
+                itemsIndexed(tasks, key = {_, task -> task.processId}) { index, task ->
                     Row(
                         modifier = Modifier.padding(16.dp)
                     ) {
