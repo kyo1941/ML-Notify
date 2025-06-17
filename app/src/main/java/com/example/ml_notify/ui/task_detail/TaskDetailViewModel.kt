@@ -50,6 +50,8 @@ class TaskDetailViewModel @Inject constructor(
 
     private fun saveTask() {
         val currentTask = _task.value ?: return
+        if (_message.value == currentTask.message) return
+
         viewModelScope.launch {
             try {
                 val updatedTask = currentTask.copy(message = _message.value)
