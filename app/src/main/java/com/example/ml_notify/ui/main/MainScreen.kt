@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -20,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.TextField
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.Composable
@@ -178,7 +178,7 @@ fun MainScreen(
                 }
             },
             confirmButton = {
-                IconButton(onClick = {
+                TextButton(onClick = {
                     mainViewModel.registerTask(taskName.value, taskMessage.value)
                     showDialog.value = false
                     taskName.value = ""
@@ -187,7 +187,7 @@ fun MainScreen(
                 }
             },
             dismissButton = {
-                IconButton(onClick = { showDialog.value = false }) {
+                TextButton(onClick = { showDialog.value = false }) {
                     Text("キャンセル")
                 }
             }
