@@ -1,5 +1,6 @@
 package com.example.ml_notify.ui.main
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -25,18 +26,22 @@ class MainViewModel @Inject constructor (
 
     fun registerTask(taskName: String, taskMessage: String?) {
         viewModelScope.launch {
-            val newTask = TaskEntity(
-                processId = UUID.randomUUID().toString(),
-                name = taskName,
-                status = TaskStatus.PENDING,
-                registeredAt = System.currentTimeMillis(),
-                startTime = null,
-                message = taskMessage
-            )
+            try {
+                val newTask = TaskEntity(
+                    processId = UUID.randomUUID().toString(),
+                    name = taskName,
+                    status = TaskStatus.PENDING,
+                    registeredAt = System.currentTimeMillis(),
+                    startTime = null,
+                    message = taskMessage
+                )
+                taskRepository.insertTask(newTask)
+                showSnackbar("タスク $taskName が登録されました")
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "タスクの登録に失敗しました", e)
+                showSnackbar("タスクの登録に失敗しました")
+            }
 
-            taskRepository.insertTask(newTask)
-
-            showSnackbar("タスク $taskName が登録されました")
         }
     }
 }
