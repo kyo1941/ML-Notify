@@ -12,9 +12,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
@@ -24,15 +23,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ml_notify.R
 
 @Composable
 fun TaskDetailScreen (
     navController: NavHostController,
-    processId: String
+    processId: String,
+    taskDetailViewModel: TaskDetailViewModel = hiltViewModel()
 ) {
-    // TODO: processIdを用いてDBから情報を取得する (更新のタイミングが悪いときにも対応できるように引数全体は渡さない)
-    var message by remember { mutableStateOf("hogehoge") }
+    val task by taskDetailViewModel.task.collectAsState()
+    val message by taskDetailViewModel.message.collectAsState()
+
+    LaunchedEffect(processId) {
+        taskDetailViewModel.fetchTask(processId)
+    }
 
     Column (
         modifier = Modifier
@@ -92,7 +97,7 @@ fun TaskDetailScreen (
 
         // TODO: 渡されたタスク情報から取得したものを配置する．オプショナルなので書き込んだのち保存する
         TextField(
-            value = message,
+            value = message ?: "",
             onValueChange = { message = it },
             modifier = Modifier.fillMaxWidth(0.8f).align(Alignment.CenterHorizontally)
         )
