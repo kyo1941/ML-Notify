@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ml_notify.navigation.AppRoutes
 import com.example.ml_notify.ui.theme.button_bg_color
@@ -51,6 +50,14 @@ fun MainScreen(
     LaunchedEffect(Unit) {
         mainViewModel.snackbarEvent.collect { message ->
             snackbarHostState.showSnackbar(message)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        mainViewModel.registerEvent.collect {
+            showDialog.value = false
+            taskName.value = ""
+            taskMessage.value = null
         }
     }
 
@@ -181,9 +188,6 @@ fun MainScreen(
                 TextButton(
                     onClick = {
                         mainViewModel.registerTask(taskName.value, taskMessage.value)
-                        showDialog.value = false
-                        taskName.value = ""
-                        taskMessage.value = null
                     },
                     enabled = taskName.value.isNotBlank()
                 ) {

@@ -20,6 +20,9 @@ class MainViewModel @Inject constructor (
     private val _snackbarEvent = MutableSharedFlow<String>()
     val snackbarEvent = _snackbarEvent.asSharedFlow()
 
+    private val _registerEvent = MutableSharedFlow<Unit>()
+    val registerEvent = _registerEvent.asSharedFlow()
+
     suspend fun showSnackbar(message: String) {
         _snackbarEvent.emit(message)
     }
@@ -37,6 +40,7 @@ class MainViewModel @Inject constructor (
                 )
                 taskRepository.insertTask(newTask)
                 showSnackbar("タスク $taskName が登録されました")
+                _registerEvent.emit(Unit)
             } catch (e: Exception) {
                 Log.e("MainViewModel", "タスクの登録に失敗しました", e)
                 showSnackbar("タスクの登録に失敗しました")
