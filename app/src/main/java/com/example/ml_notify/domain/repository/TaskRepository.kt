@@ -6,5 +6,6 @@ interface TaskRepository {
     suspend fun insertTask(task: TaskEntity)
     suspend fun updateTask(task: TaskEntity)
     suspend fun deleteTask(task: TaskEntity)
+    suspend fun getTasksById(processId: String): TaskEntity?
     suspend fun getAllTasks(): List<TaskEntity>
 }
