@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ml_notify.navigation.AppRoutes
 import com.example.ml_notify.ui.theme.button_bg_color
 import com.example.ml_notify.ui.theme.button_fg_color
@@ -41,7 +42,7 @@ import com.example.ml_notify.ui.theme.border_color
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 

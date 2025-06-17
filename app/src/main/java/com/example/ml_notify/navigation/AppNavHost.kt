@@ -18,10 +18,7 @@ fun AppNavHost(
 ) {
     NavHost(navController = navController, startDestination = AppRoutes.MAIN_SCREEN) {
         composable(AppRoutes.MAIN_SCREEN) {
-            MainScreen(
-                navController = navController,
-                mainViewModel = mainViewModel
-            )
+            MainScreen(navController = navController)
         }
         composable(
             route = "${AppRoutes.TASK_DETAIL_SCREEN}/{${AppRoutes.TASK_DETAIL_ARGUMENT}}",
