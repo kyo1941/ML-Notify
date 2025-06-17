@@ -178,11 +178,15 @@ fun MainScreen(
                 }
             },
             confirmButton = {
-                TextButton(onClick = {
-                    mainViewModel.registerTask(taskName.value, taskMessage.value)
-                    showDialog.value = false
-                    taskName.value = ""
-                }) {
+                TextButton(
+                    onClick = {
+                        mainViewModel.registerTask(taskName.value, taskMessage.value)
+                        showDialog.value = false
+                        taskName.value = ""
+                        taskMessage.value = null
+                    },
+                    enabled = taskName.value.isNotBlank()
+                ) {
                     Text("登録")
                 }
             },
