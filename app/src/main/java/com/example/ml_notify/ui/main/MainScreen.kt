@@ -46,7 +46,7 @@ fun MainScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val showDialog = remember { mutableStateOf(false) }
+    val showRegisterDialog = remember { mutableStateOf(false) }
     val taskName = remember { mutableStateOf("") }
     val taskMessage = remember { mutableStateOf<String?>(null) }
 
@@ -60,7 +60,7 @@ fun MainScreen(
 
     LaunchedEffect(Unit) {
         mainViewModel.registerEvent.collect {
-            showDialog.value = false
+            showRegisterDialog.value = false
             taskName.value = ""
             taskMessage.value = null
         }
@@ -149,7 +149,7 @@ fun MainScreen(
                     contentColor = button_fg_color,
                     shape = RoundedCornerShape(24.dp),
                     onClick = {
-                        showDialog.value = true
+                        showRegisterDialog.value = true
                     }
                 ) {
                     Icon(
@@ -166,9 +166,9 @@ fun MainScreen(
         }
     }
 
-    if (showDialog.value) {
+    if (showRegisterDialog.value) {
         AlertDialog(
-            onDismissRequest = { showDialog.value = false },
+            onDismissRequest = { showRegisterDialog.value = false },
             title = {
                 Text("タスクの登録")
             },
@@ -213,7 +213,7 @@ fun MainScreen(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDialog.value = false }) {
+                TextButton(onClick = { showRegisterDialog.value = false }) {
                     Text("キャンセル")
                 }
             }
