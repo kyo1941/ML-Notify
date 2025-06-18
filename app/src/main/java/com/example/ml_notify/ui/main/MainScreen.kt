@@ -110,6 +110,23 @@ fun MainScreen(
                             )
                         }
                         Spacer(Modifier.width(8.dp))
+                        IconButton(
+                            modifier = Modifier
+                                .width(24.dp)
+                                .height(24.dp),
+                            onClick = {
+                                // TODO: 削除処理を書く
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = com.example.ml_notify.R.drawable.baseline_delete_24),
+                                contentDescription = "削除",
+                                modifier = Modifier
+                                    .width(24.dp)
+                                    .height(24.dp)
+                            )
+                        }
+                        Spacer(Modifier.width(8.dp))
                     }
                     if (index < tasks.lastIndex) {
                         HorizontalDivider(
