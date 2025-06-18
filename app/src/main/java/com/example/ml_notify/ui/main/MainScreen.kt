@@ -47,6 +47,7 @@ fun MainScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val showRegisterDialog = remember { mutableStateOf(false) }
+    val showDeleteDialog = remember { mutableStateOf(false) }
     val taskName = remember { mutableStateOf("") }
     val taskMessage = remember { mutableStateOf<String?>(null) }
 
@@ -115,7 +116,7 @@ fun MainScreen(
                                 .width(24.dp)
                                 .height(24.dp),
                             onClick = {
-                                mainViewModel.deleteTask(task.processId)
+                                showDeleteDialog.value = true
                             }
                         ) {
                             Icon(
@@ -214,6 +215,33 @@ fun MainScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showRegisterDialog.value = false }) {
+                    Text("キャンセル")
+                }
+            }
+        )
+    }
+
+    if (showDeleteDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog.value = false },
+            title = {
+                Text("確認")
+            },
+            text = {
+                Text("このタスクを削除しますか？")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        mainViewModel.deleteTask(taskName.value)
+                        showDeleteDialog.value = false
+                    }
+                ) {
+                    Text("削除")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog.value = false }) {
                     Text("キャンセル")
                 }
             }
