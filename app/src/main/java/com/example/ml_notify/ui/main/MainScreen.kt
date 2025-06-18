@@ -94,7 +94,9 @@ fun MainScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = task.name
+                            text = task.name,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold
                         )
                         Spacer(Modifier.weight(1f))
                         IconButton(
