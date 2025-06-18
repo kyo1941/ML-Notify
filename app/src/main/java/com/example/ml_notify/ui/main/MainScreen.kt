@@ -28,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
@@ -46,9 +47,11 @@ fun MainScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val showDialog = remember { mutableStateOf(false) }
+    val showRegisterDialog = remember { mutableStateOf(false) }
+    val showDeleteDialog = remember { mutableStateOf(false) }
     val taskName = remember { mutableStateOf("") }
     val taskMessage = remember { mutableStateOf<String?>(null) }
+    val deleteTaskId = remember { mutableStateOf("") }
 
     val tasks by mainViewModel.tasks.collectAsState()
 
@@ -60,7 +63,7 @@ fun MainScreen(
 
     LaunchedEffect(Unit) {
         mainViewModel.registerEvent.collect {
-            showDialog.value = false
+            showRegisterDialog.value = false
             taskName.value = ""
             taskMessage.value = null
         }
@@ -87,16 +90,19 @@ fun MainScreen(
             ) {
                 itemsIndexed(tasks, key = {_, task -> task.processId}) { index, task ->
                     Row(
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = task.name
+                            text = task.name,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold
                         )
                         Spacer(Modifier.weight(1f))
                         IconButton(
                             modifier = Modifier
-                                .width(24.dp)
-                                .height(24.dp),
+                                .width(48.dp)
+                                .height(48.dp),
                             onClick = {
                                 navController.navigate("${AppRoutes.TASK_DETAIL_SCREEN}/${task.processId}")
                             }
@@ -104,6 +110,24 @@ fun MainScreen(
                             Icon(
                                 painter = painterResource(id = com.example.ml_notify.R.drawable.baseline_keyboard_arrow_right_24),
                                 contentDescription = "詳細",
+                                modifier = Modifier
+                                    .width(24.dp)
+                                    .height(24.dp)
+                            )
+                        }
+                        Spacer(Modifier.width(8.dp))
+                        IconButton(
+                            modifier = Modifier
+                                .width(48.dp)
+                                .height(48.dp),
+                            onClick = {
+                                deleteTaskId.value = task.processId
+                                showDeleteDialog.value = true
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = com.example.ml_notify.R.drawable.baseline_delete_24),
+                                contentDescription = "削除",
                                 modifier = Modifier
                                     .width(24.dp)
                                     .height(24.dp)
@@ -132,7 +156,7 @@ fun MainScreen(
                     contentColor = button_fg_color,
                     shape = RoundedCornerShape(24.dp),
                     onClick = {
-                        showDialog.value = true
+                        showRegisterDialog.value = true
                     }
                 ) {
                     Icon(
@@ -149,9 +173,9 @@ fun MainScreen(
         }
     }
 
-    if (showDialog.value) {
+    if (showRegisterDialog.value) {
         AlertDialog(
-            onDismissRequest = { showDialog.value = false },
+            onDismissRequest = { showRegisterDialog.value = false },
             title = {
                 Text("タスクの登録")
             },
@@ -196,7 +220,34 @@ fun MainScreen(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDialog.value = false }) {
+                TextButton(onClick = { showRegisterDialog.value = false }) {
+                    Text("キャンセル")
+                }
+            }
+        )
+    }
+
+    if (showDeleteDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog.value = false },
+            title = {
+                Text("確認")
+            },
+            text = {
+                Text("このタスクを削除しますか？")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        mainViewModel.deleteTask(deleteTaskId.value)
+                        showDeleteDialog.value = false
+                    }
+                ) {
+                    Text("削除")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog.value = false }) {
                     Text("キャンセル")
                 }
             }
