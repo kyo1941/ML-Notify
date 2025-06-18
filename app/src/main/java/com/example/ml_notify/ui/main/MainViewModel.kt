@@ -73,11 +73,12 @@ class MainViewModel @Inject constructor (
 
     fun deleteTask(processId: String) {
         val taskName = _tasks.value.find { it.processId == processId }?.name
+        val message =  taskName?.let { "タスク $taskName が削除されました" } ?: "タスクが削除されました"
         viewModelScope.launch {
             try {
                 taskRepository.deleteTaskById(processId)
                 fetchTasks()
-                showSnackbar("タスク $taskName が削除されました")
+                showSnackbar(message)
             } catch (e: Exception) {
                 Log.e("MainViewModel", "タスクの削除に失敗しました", e)
                 showSnackbar("タスクの削除に失敗しました")
