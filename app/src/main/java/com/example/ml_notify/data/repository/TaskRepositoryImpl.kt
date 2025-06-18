@@ -16,10 +16,6 @@ class TaskRepositoryImpl @Inject constructor(
         taskDao.update(task)
     }
 
-    override suspend fun deleteTask(task: TaskEntity) {
-        taskDao.delete(task)
-    }
-
     override suspend fun deleteTaskById(processId: String) {
         taskDao.deleteTaskById(processId)
     }
