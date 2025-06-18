@@ -115,7 +115,7 @@ fun MainScreen(
                                 .width(24.dp)
                                 .height(24.dp),
                             onClick = {
-                                // TODO: 削除処理を書く
+                                mainViewModel.deleteTask(task.processId)
                             }
                         ) {
                             Icon(
