@@ -97,8 +97,8 @@ fun MainScreen(
                         Spacer(Modifier.weight(1f))
                         IconButton(
                             modifier = Modifier
-                                .width(24.dp)
-                                .height(24.dp),
+                                .width(48.dp)
+                                .height(48.dp),
                             onClick = {
                                 navController.navigate("${AppRoutes.TASK_DETAIL_SCREEN}/${task.processId}")
                             }
@@ -114,8 +114,8 @@ fun MainScreen(
                         Spacer(Modifier.width(8.dp))
                         IconButton(
                             modifier = Modifier
-                                .width(24.dp)
-                                .height(24.dp),
+                                .width(48.dp)
+                                .height(48.dp),
                             onClick = {
                                 deleteTaskId.value = task.processId
                                 showDeleteDialog.value = true
