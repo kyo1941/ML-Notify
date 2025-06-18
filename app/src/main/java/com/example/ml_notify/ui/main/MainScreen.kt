@@ -50,6 +50,7 @@ fun MainScreen(
     val showDeleteDialog = remember { mutableStateOf(false) }
     val taskName = remember { mutableStateOf("") }
     val taskMessage = remember { mutableStateOf<String?>(null) }
+    val deleteTaskId = remember { mutableStateOf("") }
 
     val tasks by mainViewModel.tasks.collectAsState()
 
@@ -116,6 +117,7 @@ fun MainScreen(
                                 .width(24.dp)
                                 .height(24.dp),
                             onClick = {
+                                deleteTaskId.value = task.processId
                                 showDeleteDialog.value = true
                             }
                         ) {
@@ -233,7 +235,7 @@ fun MainScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        mainViewModel.deleteTask(taskName.value)
+                        mainViewModel.deleteTask(deleteTaskId.value)
                         showDeleteDialog.value = false
                     }
                 ) {
