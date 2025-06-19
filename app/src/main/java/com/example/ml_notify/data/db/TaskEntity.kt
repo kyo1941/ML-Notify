@@ -12,5 +12,6 @@ data class TaskEntity (
     val status: TaskStatus,
     val registeredAt: Long,
     val startTime: Long?,
+    val finishTime: Long?,
     val message: String?
 )
