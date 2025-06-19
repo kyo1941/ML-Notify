@@ -16,6 +16,9 @@ import javax.inject.Singleton
 import com.example.ml_notify.domain.repository.TaskRepository
 import com.example.ml_notify.model.TaskStatus
 import com.example.ml_notify.navigation.AppRoutes
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import java.util.concurrent.ConcurrentHashMap
 
 @Singleton
 class TaskDataHandlerImpl @Inject constructor(
@@ -25,6 +28,9 @@ class TaskDataHandlerImpl @Inject constructor(
     private val TAG = "TaskDataHandlerImpl"
 
     private val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    // 同時実行制御のためのprocessIdごとのMutex
+    private val taskMutexes = ConcurrentHashMap<String, Mutex>()
 
     override suspend fun handleTaskData(data: Map<String, String>) {
         Log.d(TAG, "Handling FCM data: $data")
@@ -58,22 +64,27 @@ class TaskDataHandlerImpl @Inject constructor(
             }
         }
 
-        // 受け取ったデータでDBを更新
-        val existingTask = taskRepository.getTaskById(processId)
-        if(existingTask != null) {
-            val updateTask = existingTask.copy(
-                status = taskStatus,
-                startTime = startTime ?: existingTask.startTime,
-                finishTime = finishTime ?: existingTask.finishTime
-            )
-            taskRepository.updateTask(updateTask)
-        } else {
-            // プログラム実行中にタスクが削除された時にはスキップする
-            Log.e(TAG, "Not found task with processId: $processId")
-            return
-        }
+        // processIdごとにMutexを取得する
+        val mutex = taskMutexes.computeIfAbsent(processId) { Mutex() }
 
-        sendNotification(processId, existingTask.name, taskStatus)
+
+        // Mutexを使用して同時実行を制御する
+        mutex.withLock {
+            // 受け取ったデータでDBを更新
+            val existingTask = taskRepository.getTaskById(processId)
+            if (existingTask != null) {
+                val updateTask = existingTask.copy(
+                    status = taskStatus,
+                    startTime = startTime ?: existingTask.startTime,
+                    finishTime = finishTime ?: existingTask.finishTime
+                )
+                taskRepository.updateTask(updateTask)
+                sendNotification(processId, existingTask.name, taskStatus)
+            } else {
+                // プログラム実行中にタスクが削除された時にはスキップする
+                Log.e(TAG, "Not found task with processId: $processId")
+            }
+        }
     }
 
     private fun sendNotification(processId: String, taskName: String, taskStatus: TaskStatus) {
