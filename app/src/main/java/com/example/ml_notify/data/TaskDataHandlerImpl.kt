@@ -111,8 +111,6 @@ class TaskDataHandlerImpl @Inject constructor(
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
 
-        Log.d(TAG, "Creating DeepLink: $taskDetailDeepLink")
-
         val pendingIntent = PendingIntent.getActivity(
             appContext,
             processId.hashCode(),

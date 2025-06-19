@@ -97,7 +97,6 @@ fun MainScreen(
                             .clickable(
                                 onClickLabel = "タスク「${task.name}」の詳細を開く",
                                 onClick = {
-                                    Log.d("MainScreen", "Moving Detail Screen: ${AppRoutes.TASK_DETAIL_SCREEN}/${task.processId}")
                                     navController.navigate("${AppRoutes.TASK_DETAIL_SCREEN}/${task.processId}")
                             }
                         ),
