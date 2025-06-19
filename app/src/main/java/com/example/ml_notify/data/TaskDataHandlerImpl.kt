@@ -105,7 +105,7 @@ class TaskDataHandlerImpl @Inject constructor(
 
         val notificationIcon = R.drawable.ic_launcher_foreground
 
-        // TODO: タップ時に指定の画面をタスク詳細画面に遷移できるようにする
+        // タスク詳細画面へのDeepLinkを作成する
         val taskDetailDeepLink = AppRoutes.DeepLink.buildTaskDetailUri(processId)
         val intent = Intent(Intent.ACTION_VIEW, taskDetailDeepLink).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
