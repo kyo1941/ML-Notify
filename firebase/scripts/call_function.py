@@ -34,8 +34,6 @@ except json.JSONDecodeError:
 payload = {
     "processId": "integrationTest001",
     "status": "START",
-    "messageTitle": "Test Title",
-    "messageBody": "This message was sent from a Python script for integration testing.",
     "deviceToken": DEVICE_TOKEN_TO_TEST,
     "taskName": "Test Task"
 }

@@ -62,8 +62,6 @@ describe('sendNotification Cloud Function', () => {
           processId: 'testProcessId',
           status: 'START',
           deviceToken: 'mockDeviceToken',
-          messageTitle: 'Test Title',
-          messageBody: 'Test Body',
           taskName: 'Test Task',
         },
         ip: '127.0.0.1',
