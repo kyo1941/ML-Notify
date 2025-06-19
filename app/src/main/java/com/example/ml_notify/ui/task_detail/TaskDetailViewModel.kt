@@ -67,7 +67,7 @@ class TaskDetailViewModel @Inject constructor(
     }
 
     fun formatTimestamp(timestamp: Long?): String {
-        // 起こらない
+        // 呼び出し元でのnullチェックを期待していますが、安全策としてここでもチェックする
         if (timestamp == null) return "不明"
 
         val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault())

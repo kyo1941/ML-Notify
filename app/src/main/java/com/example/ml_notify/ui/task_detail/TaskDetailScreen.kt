@@ -36,15 +36,26 @@ fun TaskDetailScreen (
     val task by taskDetailViewModel.task.collectAsState()
     val message by taskDetailViewModel.message.collectAsState()
 
-    val timeText = when {
-        (task?.status == TaskStatus.COMPLETED || task?.status == TaskStatus.FAILED) && task?.startTime != null && task?.finishTime != null ->
-            "開始時刻 / 終了時刻\n${taskDetailViewModel.formatTimestamp(task?.startTime)} 〜 ${taskDetailViewModel.formatTimestamp(task?.finishTime)}"
-        task?.status == TaskStatus.RUNNING && task?.startTime != null ->
-            "開始時刻 / 終了時刻\n${taskDetailViewModel.formatTimestamp(task?.startTime)} 〜 実行中"
-        task?.status == TaskStatus.PENDING ->
-            "開始時刻 / 終了時刻\n実行待ち"
-        else -> "時刻情報: 取得できませんでした"
-    }
+    val timeText = task?.let { it ->
+        when(it.status) {
+            TaskStatus.COMPLETED, TaskStatus.FAILED -> {
+                if(it.startTime != null && it.finishTime != null)
+                    "開始時刻 / 終了時刻\n${taskDetailViewModel.formatTimestamp(it.startTime)} 〜 ${taskDetailViewModel.formatTimestamp(it.finishTime)}"
+                else
+                    "開始時刻 / 終了時刻\n取得できませんでした"
+            }
+            TaskStatus.RUNNING -> {
+                if(it.startTime != null)
+                    "開始時刻 / 終了時刻\n${taskDetailViewModel.formatTimestamp(it.startTime)} 〜 実行中"
+                else
+                    "開始時刻 / 終了時刻\n取得できませんでした"
+            }
+            TaskStatus.PENDING -> {
+                "開始時刻 / 終了時刻\n実行待ち"
+            }
+        }
+    } ?: "開始時刻 / 終了時刻\n取得できませんでした"
+
 
     LaunchedEffect(processId) {
         taskDetailViewModel.fetchTask(processId)
