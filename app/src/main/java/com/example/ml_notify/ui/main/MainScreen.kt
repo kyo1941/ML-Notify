@@ -1,5 +1,6 @@
 package com.example.ml_notify.ui.main
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -90,7 +91,11 @@ fun MainScreen(
             ) {
                 itemsIndexed(tasks, key = {_, task -> task.processId}) { index, task ->
                     Row(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .clickable {
+                                navController.navigate("${AppRoutes.TASK_DETAIL_SCREEN}/${task.processId}")
+                            },
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
@@ -99,23 +104,6 @@ fun MainScreen(
                             fontWeight = FontWeight.SemiBold
                         )
                         Spacer(Modifier.weight(1f))
-                        IconButton(
-                            modifier = Modifier
-                                .width(48.dp)
-                                .height(48.dp),
-                            onClick = {
-                                navController.navigate("${AppRoutes.TASK_DETAIL_SCREEN}/${task.processId}")
-                            }
-                        ) {
-                            Icon(
-                                painter = painterResource(id = com.example.ml_notify.R.drawable.baseline_keyboard_arrow_right_24),
-                                contentDescription = "詳細",
-                                modifier = Modifier
-                                    .width(24.dp)
-                                    .height(24.dp)
-                            )
-                        }
-                        Spacer(Modifier.width(8.dp))
                         IconButton(
                             modifier = Modifier
                                 .width(48.dp)
