@@ -4,6 +4,9 @@ import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
 import { z } from "zod";
 
+// タスクステータス定数の定義
+const TASK_STATUS_VALUES = ["START", "COMPLETED", "FAILED"] as const;
+
 // 環境変数からAPIキーを取得
 const API_KEY_PARAM = defineString("SENDNOTIFICATION_APIKEY", {
     description: "API Key for authorizing requests to the sendNotification function.",
@@ -56,7 +59,7 @@ export const sendNotification = onRequest (
         // Zodスキーマ定義
         const requestBodySchema = z.object({
             processId: z.string(),
-            status: z.enum(["START", "FINISH"]),
+            status: z.enum(TASK_STATUS_VALUES),
             deviceToken: z.string(),
             messageTitle: z.string().optional(),
             messageBody: z.string().optional(),
@@ -84,7 +87,7 @@ export const sendNotification = onRequest (
         // statusの値に基づいて開始時刻か終了時刻か割り当てる
         if (status === "START") {
             taskActualStartTimeForPayload = currentTimeString;
-        } else if (status === "FINISH") {
+        } else if (status === "COMPLETED" || status === "FAILED") {
             taskActualCompletionTimeForPayload = currentTimeString;
         }
 
