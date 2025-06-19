@@ -11,6 +11,9 @@ import javax.inject.Inject
 import com.example.ml_notify.domain.repository.TaskRepository
 import com.example.ml_notify.data.db.TaskEntity
 import kotlinx.coroutines.flow.debounce
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @HiltViewModel
 class TaskDetailViewModel @Inject constructor(
@@ -61,5 +64,13 @@ class TaskDetailViewModel @Inject constructor(
                 Log.e("TaskDetailViewModel", "タスクの保存に失敗しました", e)
             }
         }
+    }
+
+    fun formatTimestamp(timestamp: Long?): String {
+        // 起こらない
+        if (timestamp == null) return "不明"
+
+        val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault())
+        return sdf.format(Date(timestamp))
     }
 }
