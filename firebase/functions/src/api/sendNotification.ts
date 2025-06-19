@@ -56,7 +56,7 @@ export const sendNotification = onRequest (
         // Zodスキーマ定義
         const requestBodySchema = z.object({
             processId: z.string(),
-            status: z.enum(["START", "FINISH"]),
+            status: z.enum(["START", "COMPLETED", "FAILED"]),
             deviceToken: z.string(),
             messageTitle: z.string().optional(),
             messageBody: z.string().optional(),
@@ -84,7 +84,7 @@ export const sendNotification = onRequest (
         // statusの値に基づいて開始時刻か終了時刻か割り当てる
         if (status === "START") {
             taskActualStartTimeForPayload = currentTimeString;
-        } else if (status === "FINISH") {
+        } else if (status === "COMPLETED" || status === "FAILED") {
             taskActualCompletionTimeForPayload = currentTimeString;
         }
 
