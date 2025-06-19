@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ml_notify.R
+import com.example.ml_notify.model.TaskStatus
 
 @Composable
 fun TaskDetailScreen (
@@ -34,6 +35,27 @@ fun TaskDetailScreen (
 ) {
     val task by taskDetailViewModel.task.collectAsState()
     val message by taskDetailViewModel.message.collectAsState()
+
+    val timeText = task?.let { it ->
+        when(it.status) {
+            TaskStatus.COMPLETED, TaskStatus.FAILED -> {
+                if(it.startTime != null && it.finishTime != null)
+                    "開始時刻 / 終了時刻\n${taskDetailViewModel.formatTimestamp(it.startTime)} 〜 ${taskDetailViewModel.formatTimestamp(it.finishTime)}"
+                else
+                    "開始時刻 / 終了時刻\n取得できませんでした"
+            }
+            TaskStatus.RUNNING -> {
+                if(it.startTime != null)
+                    "開始時刻 / 終了時刻\n${taskDetailViewModel.formatTimestamp(it.startTime)} 〜 実行中"
+                else
+                    "開始時刻 / 終了時刻\n取得できませんでした"
+            }
+            TaskStatus.PENDING -> {
+                "開始時刻 / 終了時刻\n実行待ち"
+            }
+        }
+    } ?: "開始時刻 / 終了時刻\n取得できませんでした"
+
 
     LaunchedEffect(processId) {
         taskDetailViewModel.fetchTask(processId)
@@ -70,7 +92,7 @@ fun TaskDetailScreen (
         Spacer(Modifier.padding(vertical = 8.dp))
 
         Text(
-            text = "開始時刻 or 終了時刻: ${task?.startTime ?: "取得できませんでした"}",
+            text = timeText,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             color = Color.Gray
