@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.example.ml_notify.ui.main.MainScreen
 import com.example.ml_notify.ui.task_detail.TaskDetailScreen
 import com.example.ml_notify.ui.main.MainViewModel
@@ -24,7 +25,12 @@ fun AppNavHost(
             route = "${AppRoutes.TASK_DETAIL_SCREEN}/{${AppRoutes.TASK_DETAIL_ARGUMENT}}",
             arguments = listOf(navArgument(AppRoutes.TASK_DETAIL_ARGUMENT) {
                 type = NavType.StringType
-            })
+            }),
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = AppRoutes.DeepLink.getTaskDetailUriPattern()
+                }
+            )
         ) { backStackEntry ->
             val processId = backStackEntry.arguments?.getString(AppRoutes.TASK_DETAIL_ARGUMENT)
             LaunchedEffect(processId) {

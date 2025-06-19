@@ -1,5 +1,6 @@
 package com.example.ml_notify.ui.main
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -96,6 +97,7 @@ fun MainScreen(
                             .clickable(
                                 onClickLabel = "タスク「${task.name}」の詳細を開く",
                                 onClick = {
+                                    Log.d("MainScreen", "Moving Detail Screen: ${AppRoutes.TASK_DETAIL_SCREEN}/${task.processId}")
                                     navController.navigate("${AppRoutes.TASK_DETAIL_SCREEN}/${task.processId}")
                             }
                         ),

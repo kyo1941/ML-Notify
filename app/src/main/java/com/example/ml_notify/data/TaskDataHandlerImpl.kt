@@ -2,7 +2,9 @@ package com.example.ml_notify.data
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -13,6 +15,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import com.example.ml_notify.domain.repository.TaskRepository
 import com.example.ml_notify.model.TaskStatus
+import com.example.ml_notify.navigation.AppRoutes
 
 @Singleton
 class TaskDataHandlerImpl @Inject constructor(
@@ -102,14 +105,28 @@ class TaskDataHandlerImpl @Inject constructor(
 
         val notificationIcon = R.drawable.ic_launcher_foreground
 
+        // TODO: タップ時に指定の画面をタスク詳細画面に遷移できるようにする
+        val taskDetailDeepLink = AppRoutes.DeepLink.buildTaskDetailUri(processId)
+        val intent = Intent(Intent.ACTION_VIEW, taskDetailDeepLink).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+
+        Log.d(TAG, "Creating DeepLink: $taskDetailDeepLink")
+
+        val pendingIntent = PendingIntent.getActivity(
+            appContext,
+            processId.hashCode(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notificationBuilder = NotificationCompat.Builder(appContext, channelId)
             .setSmallIcon(notificationIcon)
             .setContentTitle(title)
             .setContentText(body)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-        // TODO: タップ時に指定の画面をタスク詳細画面に遷移できるようにする
+            .setContentIntent(pendingIntent)
 
         notificationManager.notify(processId.hashCode(), notificationBuilder.build())
         Log.d(TAG, "Notification displayed: '$title' - '$body'")
