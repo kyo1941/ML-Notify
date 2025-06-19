@@ -93,9 +93,12 @@ fun MainScreen(
                     Row(
                         modifier = Modifier
                             .padding(16.dp)
-                            .clickable {
-                                navController.navigate("${AppRoutes.TASK_DETAIL_SCREEN}/${task.processId}")
-                            },
+                            .clickable(
+                                onClickLabel = "タスク「${task.name}」の詳細を開く",
+                                onClick = {
+                                    navController.navigate("${AppRoutes.TASK_DETAIL_SCREEN}/${task.processId}")
+                            }
+                        ),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
