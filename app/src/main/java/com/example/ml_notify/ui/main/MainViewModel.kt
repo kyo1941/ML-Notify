@@ -57,6 +57,7 @@ class MainViewModel @Inject constructor (
                     status = TaskStatus.PENDING,
                     registeredAt = System.currentTimeMillis(),
                     startTime = null,
+                    finishTime = null,
                     message = taskMessage
                 )
                 taskRepository.insertTask(newTask)
