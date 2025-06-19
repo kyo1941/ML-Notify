@@ -10,14 +10,14 @@ import com.example.ml_notify.R
 import com.example.ml_notify.domain.TaskDataHandler
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import javax.inject.Singleton // アプリケーション全体で単一のインスタンスにする
+import javax.inject.Singleton
+import com.example.ml_notify.domain.repository.TaskRepository
+import com.example.ml_notify.model.TaskStatus
 
 @Singleton
 class TaskDataHandlerImpl @Inject constructor(
     @ApplicationContext private val appContext: Context,
-
-    // TODO: TaskRepository を注入してDB操作を行う
-
+    private val taskRepository: TaskRepository
 ) : TaskDataHandler {
     private val TAG = "TaskDataHandlerImpl"
 
@@ -31,16 +31,53 @@ class TaskDataHandlerImpl @Inject constructor(
         val title = data["messageTitle"]
         val body = data["messageBody"]
 
-        // TODO: 受信したprocessIdとstatusを使用してアプリ内部の状態を更新する
+        // 開始or終了時刻データを取得する
+        val startTime = data["taskActualStartTime"]?.toLongOrNull()
+        val finishTime = data["taskActualCompletionTime"]?.toLongOrNull()
 
-        Log.i(TAG, "FCM Data processed: ID=$processId, Status=$status, Title=$title")
-
-        // 基本的にサーバー側でnullにならないように管理しておく
-        if (processId != null && title != null && body != null) {
-            sendNotification(processId, title, body)
-        } else {
-            Log.e(TAG, "processId is ${if (processId == null) "null" else "exist"}, title is ${if (title == null) "null" else "exist"}. body is ${if (body == null) "null" else "exist"}")
+        // 必須パラメータのチェック．サーバー側で不正なデータは弾いているが、念のため
+        if (processId == null || status == null || title == null || body == null || (startTime == null && finishTime == null)) {
+            Log.e(TAG, "必須パラメータ不足: processId=${if (processId == null) "null" else "exist"}, " +
+                    "status=${if (status == null) "null" else "exist"}, " +
+                    "title=${if (title == null) "null" else "exist"}, " +
+                    "body=${if (body == null) "null" else "exist"}, " +
+                    "startTime=${if (startTime == null) "null" else startTime}, " +
+                    "finishTime=${if (finishTime == null) "null" else finishTime}")
+            return
         }
+
+        Log.i(TAG, "FCM Data processed: ID=$processId, Status=$status, Title=$title, Body=$body, " +
+                "StartTime=${if (startTime != null) startTime else "null"}, " +
+                "FinishTime=${if (finishTime != null) finishTime else "null"}")
+
+
+        val taskStatus = when (status) {
+            "START" -> TaskStatus.RUNNING
+            "COMPLETED" -> TaskStatus.COMPLETED
+            "FAILED" -> TaskStatus.FAILED
+            else -> {
+                // サーバー側で不明なステータスを弾いているので起こらない
+                Log.e(TAG, "Unknown status: $status")
+                return
+            }
+        }
+
+        // 受け取ったデータでDBを更新
+        val existingTask = taskRepository.getTaskById(processId)
+        if(existingTask != null) {
+            val updateTask = existingTask.copy(
+                status = taskStatus,
+                startTime = startTime ?: existingTask.startTime,
+                finishTime = finishTime ?: existingTask.finishTime
+            )
+            taskRepository.updateTask(updateTask)
+        } else {
+            // プログラム実行中にタスクが削除された時にはスキップする
+            Log.e(TAG, "Not found task with processId: $processId")
+            return
+        }
+
+        sendNotification(processId, title, body)
     }
 
     private fun sendNotification(processId: String, title: String, body: String) {
