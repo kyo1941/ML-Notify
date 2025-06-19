@@ -26,7 +26,7 @@ class TaskDataHandlerImpl @Inject constructor(
     override suspend fun handleTaskData(data: Map<String, String>) {
         Log.d(TAG, "Handling FCM data: $data")
 
-        val processId = data["process_id"]
+        val processId = data["processId"]
         val status = data["status"]
         val title = data["messageTitle"]
         val body = data["messageBody"]
