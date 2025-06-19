@@ -35,10 +35,7 @@ class TaskDataHandlerImpl @Inject constructor(
 
         // 必須パラメータのチェック．サーバー側で不正なデータは弾いているが、念のため
         if (processId == null || status == null || (startTime == null && finishTime == null)) {
-            Log.e(TAG, "必須パラメータ不足: processId=${if (processId == null) "null" else "exist"}, " +
-                    "status=${if (status == null) "null" else "exist"}, " +
-                    "startTime=${if (startTime == null) "null" else startTime}, " +
-                    "finishTime=${if (finishTime == null) "null" else finishTime}")
+            Log.e(TAG, "必須パラメータ不足: processId=$processId, status=$status, startTime=$startTime, finishTime=$finishTime")
             return
         }
 
