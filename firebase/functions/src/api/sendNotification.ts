@@ -61,8 +61,6 @@ export const sendNotification = onRequest (
             processId: z.string(),
             status: z.enum(TASK_STATUS_VALUES),
             deviceToken: z.string(),
-            messageTitle: z.string().optional(),
-            messageBody: z.string().optional(),
             taskName: z.string().optional(),
         });
 
@@ -77,7 +75,7 @@ export const sendNotification = onRequest (
             });
             return;
         }
-        const { processId, status, messageTitle, messageBody, deviceToken, taskName } = parseResult.data;
+        const { processId, status, deviceToken, taskName } = parseResult.data;
 
         // 時刻情報のサーバーサイドでの生成・割り当て
         const currentTimeString = new Date().getTime().toString();
@@ -95,8 +93,6 @@ export const sendNotification = onRequest (
         const fcmMessageData: { [key: string]: string } = {
             processId: String(processId),
             status: String(status),
-            messageTitle: messageTitle ? String(messageTitle) : `${taskName || "タスク"} ${status}`,
-            messageBody: messageBody ? String(messageBody) : `タスク (ID: ${String(processId).substring(0, 8)}) が ${status} になりました。`,
         };
 
         if (taskName) {
