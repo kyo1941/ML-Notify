@@ -275,9 +275,9 @@ describe('sendNotification Cloud Function', () => {
         expect(sentData.taskActualCompletionTime).toBeUndefined();
       });
 
-      it('should include taskActualCompletionTime with mocked timestamp when status is FINISH', async () => {
-        mockReq.body.status = 'FINISH';
-        mockSend.mockResolvedValue({ messageId: 'fcm-success-finish' });
+      it('should include taskActualCompletionTime with mocked timestamp when status is COMPLETED', async () => {
+        mockReq.body.status = 'COMPLETED';
+        mockSend.mockResolvedValue({ messageId: 'fcm-success-completed' });
 
         await sendNotification(mockReq, mockRes);
 
@@ -292,7 +292,24 @@ describe('sendNotification Cloud Function', () => {
         expect(sentData.taskActualStartTime).toBeUndefined();
       });
 
-      it('should not include taskActualStartTime or taskActualCompletionTime when status is neither START nor FINISH', async () => {
+      it('should include taskActualCompletionTime with mocked timestamp when status is FAILED', async () => {
+        mockReq.body.status = 'FAILED';
+        mockSend.mockResolvedValue({ messageId: 'fcm-success-failed' });
+
+        await sendNotification(mockReq, mockRes);
+
+        expect(mockRes.status).toHaveBeenCalledWith(200);
+        expect(mockSend).toHaveBeenCalledTimes(1);
+        expect(mockSend).toHaveBeenCalledWith(expect.objectContaining({
+          data: expect.objectContaining({
+            taskActualCompletionTime: MOCK_TIMESTAMP_STRING,
+          }),
+        }));
+        const sentData = mockSend.mock.calls[0][0].data;
+        expect(sentData.taskActualStartTime).toBeUndefined();
+      });
+
+      it('should not include taskActualStartTime or taskActualCompletionTime when status is neither START nor COMPLETED nor FAILED', async () => {
         mockReq.body.status = 'UNKNOWN';
         await sendNotification(mockReq, mockRes);
         expect(mockRes.status).toHaveBeenCalledWith(400);
