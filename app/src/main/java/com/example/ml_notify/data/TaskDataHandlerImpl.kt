@@ -28,25 +28,21 @@ class TaskDataHandlerImpl @Inject constructor(
 
         val processId = data["processId"]
         val status = data["status"]
-        val title = data["messageTitle"]
-        val body = data["messageBody"]
 
         // 開始or終了時刻データを取得する
         val startTime = data["taskActualStartTime"]?.toLongOrNull()
         val finishTime = data["taskActualCompletionTime"]?.toLongOrNull()
 
         // 必須パラメータのチェック．サーバー側で不正なデータは弾いているが、念のため
-        if (processId == null || status == null || title == null || body == null || (startTime == null && finishTime == null)) {
+        if (processId == null || status == null || (startTime == null && finishTime == null)) {
             Log.e(TAG, "必須パラメータ不足: processId=${if (processId == null) "null" else "exist"}, " +
                     "status=${if (status == null) "null" else "exist"}, " +
-                    "title=${if (title == null) "null" else "exist"}, " +
-                    "body=${if (body == null) "null" else "exist"}, " +
                     "startTime=${if (startTime == null) "null" else startTime}, " +
                     "finishTime=${if (finishTime == null) "null" else finishTime}")
             return
         }
 
-        Log.i(TAG, "FCM Data processed: ID=$processId, Status=$status, Title=$title, Body=$body, " +
+        Log.i(TAG, "FCM Data processed: ID=$processId, Status=$status, " +
                 "StartTime=${if (startTime != null) startTime else "null"}, " +
                 "FinishTime=${if (finishTime != null) finishTime else "null"}")
 
@@ -77,12 +73,23 @@ class TaskDataHandlerImpl @Inject constructor(
             return
         }
 
-        sendNotification(processId, title, body)
+        sendNotification(processId, existingTask.name, taskStatus)
     }
 
-    private fun sendNotification(processId: String, title: String, body: String) {
+    private fun sendNotification(processId: String, taskName: String, taskStatus: TaskStatus) {
         val channelId = appContext.getString(R.string.ml_notification_channel_id)
         val channelName = appContext.getString(R.string.ml_notification_channel_name)
+
+        // taskStatusに基づいて通知のタイトルと本文を生成
+        val title = "タスク：$taskName"
+        val body = when (taskStatus) {
+            TaskStatus.RUNNING -> "${taskName}の実行を開始しました"
+            TaskStatus.COMPLETED -> "${taskName}が完了しました"
+            TaskStatus.FAILED -> "${taskName}が失敗しました"
+
+            // handleTaskDataで不明なステータスは弾いているので、ここには来ないはず
+            else -> "${taskStatus.name}のステータスが変更されました"
+        }
 
         // Android 0 (API 26) 以上では通知チャンネルの作成が必要
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
