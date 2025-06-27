@@ -1,14 +1,16 @@
 package com.example.ml_notify.ui.main
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -73,9 +75,9 @@ fun MainScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { paddingValues ->
+    ) { _ ->
         Column(
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(WindowInsets.systemBars.asPaddingValues())
         ) {
 
             Text(
@@ -90,7 +92,7 @@ fun MainScreen(
                     .weight(1f)
                     .padding(horizontal = 8.dp)
             ) {
-                itemsIndexed(tasks, key = {_, task -> task.processId}) { index, task ->
+                itemsIndexed(tasks, key = { _, task -> task.processId }) { index, task ->
                     Row(
                         modifier = Modifier
                             .padding(16.dp)
@@ -98,8 +100,8 @@ fun MainScreen(
                                 onClickLabel = "タスク「${task.name}」の詳細を開く",
                                 onClick = {
                                     navController.navigate("${AppRoutes.TASK_DETAIL_SCREEN}/${task.processId}")
-                            }
-                        ),
+                                }
+                            ),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
