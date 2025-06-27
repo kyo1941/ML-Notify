@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -31,10 +32,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val view = LocalView.current
+            val window = remember(view) { (view.context as ComponentActivity).window }
+            val insetsController = remember(window, view) { WindowCompat.getInsetsController(window, view) }
             SideEffect {
-                val window = (view.context as ComponentActivity).window
                 WindowCompat.setDecorFitsSystemWindows(window, false)
-                val insetsController = WindowCompat.getInsetsController(window, view)
                 insetsController.isAppearanceLightStatusBars = true
             }
 
