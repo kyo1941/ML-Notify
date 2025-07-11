@@ -8,6 +8,8 @@ import com.example.ml_notify.data.repository.TaskRepositoryImpl
 import com.example.ml_notify.domain.repository.TaskRepository
 import androidx.room.Room
 import android.content.Context
+import com.example.ml_notify.data.repository.FcmTokenRepositoryImpl
+import com.example.ml_notify.domain.repository.FcmTokenRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -28,6 +30,11 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindTaskRepository(taskRepositoryImpl: TaskRepositoryImpl): TaskRepository
+
+    // FcmTokenRepository型にはFcmTokenRepositoryImplのインスタンスを注入する
+    @Binds
+    @Singleton
+    abstract fun bindFcmTokenRepository(fcmTokenRepositoryImpl: FcmTokenRepositoryImpl): FcmTokenRepository
 }
 
 @Module
