@@ -8,7 +8,9 @@ import com.example.ml_notify.data.repository.TaskRepositoryImpl
 import com.example.ml_notify.domain.repository.TaskRepository
 import androidx.room.Room
 import android.content.Context
+import com.example.ml_notify.data.repository.DeviceSettingRepositoryImpl
 import com.example.ml_notify.data.repository.FcmTokenRepositoryImpl
+import com.example.ml_notify.domain.repository.DeviceSettingRepository
 import com.example.ml_notify.domain.repository.FcmTokenRepository
 import dagger.Binds
 import dagger.Module
@@ -35,6 +37,10 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindFcmTokenRepository(fcmTokenRepositoryImpl: FcmTokenRepositoryImpl): FcmTokenRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDeviceSettingRepository(deviceSettingRepositoryImpl: DeviceSettingRepositoryImpl): DeviceSettingRepository
 }
 
 @Module
