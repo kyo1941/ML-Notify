@@ -55,7 +55,8 @@ fun MainScreen(
     val showTaskRegisterDialog = remember { mutableStateOf(false) }
     val showDeleteDialog = remember { mutableStateOf(false) }
 
-    val deviceName = remember { mutableStateOf("") }
+    val deviceName by mainViewModel.deviceName.collectAsState()
+    val editDeviceName = remember { mutableStateOf(deviceName) }
 
     val taskName = remember { mutableStateOf("") }
     val taskMessage = remember { mutableStateOf<String?>(null) }
@@ -80,7 +81,7 @@ fun MainScreen(
     LaunchedEffect(Unit) {
         mainViewModel.updateDeviceNameEvent.collect { name ->
             showDeviceNameRegisterDialog.value = false
-            deviceName.value = name
+            editDeviceName.value = name
         }
     }
 
@@ -88,6 +89,10 @@ fun MainScreen(
         mainViewModel.taskDetailEvent.collect { processId ->
             showDeleteDialog.value = false
         }
+    }
+
+    LaunchedEffect(deviceName) {
+        editDeviceName.value = deviceName
     }
 
     Scaffold(
@@ -212,8 +217,8 @@ fun MainScreen(
             },
             text = {
                 OutlinedTextField(
-                    value = deviceName.value,
-                    onValueChange = { deviceName.value = it },
+                    value = editDeviceName.value,
+                    onValueChange = { editDeviceName.value = it },
                     modifier = Modifier.fillMaxWidth(),
                     label = {
                         Text(
@@ -226,7 +231,7 @@ fun MainScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        mainViewModel.updateDeviceName(deviceName.value)
+                        mainViewModel.updateDeviceName(editDeviceName.value)
                     }
                 ) {
                     Text("変更")
