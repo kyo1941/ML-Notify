@@ -27,6 +27,9 @@ class MainViewModel @Inject constructor (
     private val _registerEvent = MutableSharedFlow<Unit>()
     val registerEvent = _registerEvent.asSharedFlow()
 
+    private val _taskDetailEvent = MutableSharedFlow<String>()
+    val taskDetailEvent = _taskDetailEvent.asSharedFlow()
+
     private val _tasks = MutableStateFlow<List<TaskEntity>>(emptyList())
     val tasks = _tasks.asStateFlow()
 
@@ -101,6 +104,7 @@ class MainViewModel @Inject constructor (
                 taskRepository.deleteTaskById(processId)
                 fetchTasks()
                 showSnackbar(message)
+                _taskDetailEvent.emit(processId)
             } catch (e: Exception) {
                 Log.e("MainViewModel", "タスクの削除に失敗しました", e)
                 showSnackbar("タスクの削除に失敗しました")

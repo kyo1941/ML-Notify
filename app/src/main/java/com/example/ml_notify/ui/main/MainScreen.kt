@@ -84,6 +84,12 @@ fun MainScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        mainViewModel.taskDetailEvent.collect { processId ->
+            showDeleteDialog.value = false
+        }
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { _ ->
@@ -301,7 +307,6 @@ fun MainScreen(
                 TextButton(
                     onClick = {
                         mainViewModel.deleteTask(deleteTaskId.value)
-                        showDeleteDialog.value = false
                     }
                 ) {
                     Text("削除")
