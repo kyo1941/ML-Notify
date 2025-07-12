@@ -12,12 +12,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import java.util.UUID
 import com.example.ml_notify.data.db.TaskEntity
+import com.example.ml_notify.domain.repository.DeviceSettingRepository
 import com.example.ml_notify.domain.repository.TaskRepository
 import com.example.ml_notify.model.TaskStatus
 
 @HiltViewModel
 class MainViewModel @Inject constructor (
-    private val taskRepository: TaskRepository
+    private val taskRepository: TaskRepository,
+    private val deviceSettingRepository: DeviceSettingRepository
 ) : ViewModel() {
     private val _snackbarEvent = MutableSharedFlow<String>()
     val snackbarEvent = _snackbarEvent.asSharedFlow()
@@ -25,11 +27,21 @@ class MainViewModel @Inject constructor (
     private val _registerEvent = MutableSharedFlow<Unit>()
     val registerEvent = _registerEvent.asSharedFlow()
 
+    private val _taskDetailEvent = MutableSharedFlow<String>()
+    val taskDetailEvent = _taskDetailEvent.asSharedFlow()
+
     private val _tasks = MutableStateFlow<List<TaskEntity>>(emptyList())
     val tasks = _tasks.asStateFlow()
 
+    private val _deviceName = MutableStateFlow("")
+    val deviceName = _deviceName.asStateFlow()
+
+    private val _updateDeviceNameEvent = MutableSharedFlow<String>()
+    val updateDeviceNameEvent = _updateDeviceNameEvent.asSharedFlow()
+
     init {
         fetchTasks()
+        fetchDeviceName()
     }
 
     private fun fetchTasks() {
@@ -40,6 +52,18 @@ class MainViewModel @Inject constructor (
             } catch (e: Exception) {
                 Log.e("MainViewModel", "タスクの取得に失敗しました", e)
                 showSnackbar("タスクの取得に失敗しました")
+            }
+        }
+    }
+
+    private fun fetchDeviceName() {
+        viewModelScope.launch {
+            try {
+                val name = deviceSettingRepository.getDeviceName()
+                _deviceName.value = name
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "デバイス名の取得に失敗しました", e)
+                showSnackbar("デバイス名の取得に失敗しました")
             }
         }
     }
@@ -80,9 +104,24 @@ class MainViewModel @Inject constructor (
                 taskRepository.deleteTaskById(processId)
                 fetchTasks()
                 showSnackbar(message)
+                _taskDetailEvent.emit(processId)
             } catch (e: Exception) {
                 Log.e("MainViewModel", "タスクの削除に失敗しました", e)
                 showSnackbar("タスクの削除に失敗しました")
+            }
+        }
+    }
+
+    fun updateDeviceName(newName: String) {
+        viewModelScope.launch {
+            try {
+                deviceSettingRepository.sendDeviceName(newName)
+                _deviceName.value = newName
+                showSnackbar("デバイス名が更新されました")
+                _updateDeviceNameEvent.emit(newName)
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "デバイス名の更新に失敗しました", e)
+                showSnackbar("デバイス名の更新に失敗しました")
             }
         }
     }

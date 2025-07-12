@@ -1,11 +1,6 @@
 package com.example.ml_notify
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
-import android.os.Build
 import android.util.Log
-import androidx.core.app.NotificationCompat
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,16 +10,22 @@ import kotlinx.coroutines.launch
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.example.ml_notify.domain.TaskDataHandler
+import com.example.ml_notify.domain.repository.FcmTokenRepository
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyFirebaseMessagingService : FirebaseMessagingService() {
-    private val TAG = "MyFirebaseMsgService"
+    companion object {
+        private val TAG = "MyFirebaseMsgService"
+    }
 
     // HiltにTaskDataHandlerのインスタンスを注入する
     @Inject
     lateinit var taskDataHandler: TaskDataHandler
+
+    @Inject
+    lateinit var fcmTokenRepository: FcmTokenRepository
 
     // 子コルーチンと分離させる
     private val serviceJob = SupervisorJob()
@@ -33,7 +34,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
 
-        sendRegistrationToServer(token)
+        serviceScope.launch {
+            fcmTokenRepository.sendRegistrationToken(token)
+        }
     }
 
     // フォアグラウンド時に実行される
@@ -51,13 +54,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         remoteMessage.notification?.let {
             Log.d(TAG, "Message Notification body: ${it.body}")
         }
-    }
-
-    // サーバー(Cloud Function)にトークンを送信する
-    private fun sendRegistrationToServer(token: String?) {
-        Log.d(TAG, "sendRegistrationTokenToServer($token)")
-
-        // TODO: サーバーにトークンを送信するロジックの実装
     }
 
     private fun handleNow(data: Map<String, String>) {

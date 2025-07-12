@@ -50,9 +50,14 @@ fun MainScreen(
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-
-    val showRegisterDialog = remember { mutableStateOf(false) }
+    
+    val showDeviceNameRegisterDialog = remember { mutableStateOf(false) }
+    val showTaskRegisterDialog = remember { mutableStateOf(false) }
     val showDeleteDialog = remember { mutableStateOf(false) }
+
+    val deviceName by mainViewModel.deviceName.collectAsState()
+    val editDeviceName = remember { mutableStateOf(deviceName) }
+
     val taskName = remember { mutableStateOf("") }
     val taskMessage = remember { mutableStateOf<String?>(null) }
     val deleteTaskId = remember { mutableStateOf("") }
@@ -67,10 +72,27 @@ fun MainScreen(
 
     LaunchedEffect(Unit) {
         mainViewModel.registerEvent.collect {
-            showRegisterDialog.value = false
+            showTaskRegisterDialog.value = false
             taskName.value = ""
             taskMessage.value = null
         }
+    }
+
+    LaunchedEffect(Unit) {
+        mainViewModel.updateDeviceNameEvent.collect { name ->
+            showDeviceNameRegisterDialog.value = false
+            editDeviceName.value = name
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        mainViewModel.taskDetailEvent.collect { processId ->
+            showDeleteDialog.value = false
+        }
+    }
+
+    LaunchedEffect(deviceName) {
+        editDeviceName.value = deviceName
     }
 
     Scaffold(
@@ -141,6 +163,26 @@ fun MainScreen(
             Row(
                 Modifier.fillMaxWidth()
             ) {
+                Spacer(Modifier.width(24.dp))
+                FloatingActionButton(
+                    modifier = Modifier
+                        .width(56.dp)
+                        .height(56.dp),
+                    containerColor = button_bg_color,
+                    contentColor = button_fg_color,
+                    shape = RoundedCornerShape(24.dp),
+                    onClick = {
+                        showDeviceNameRegisterDialog.value = true
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(id = com.example.ml_notify.R.drawable.outline_devices_24),
+                        contentDescription = "デバイス名の変更",
+                        modifier = Modifier
+                            .width(24.dp)
+                            .height(24.dp)
+                    )
+                }
                 Spacer(Modifier.weight(1f))
                 FloatingActionButton(
                     modifier = Modifier
@@ -150,7 +192,7 @@ fun MainScreen(
                     contentColor = button_fg_color,
                     shape = RoundedCornerShape(24.dp),
                     onClick = {
-                        showRegisterDialog.value = true
+                        showTaskRegisterDialog.value = true
                     }
                 ) {
                     Icon(
@@ -167,9 +209,45 @@ fun MainScreen(
         }
     }
 
-    if (showRegisterDialog.value) {
+    if (showDeviceNameRegisterDialog.value) {
         AlertDialog(
-            onDismissRequest = { showRegisterDialog.value = false },
+            onDismissRequest = { showDeviceNameRegisterDialog.value = false },
+            title = {
+                Text("デバイス名の変更")
+            },
+            text = {
+                OutlinedTextField(
+                    value = editDeviceName.value,
+                    onValueChange = { editDeviceName.value = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = {
+                        Text(
+                            text = "デバイス名",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        mainViewModel.updateDeviceName(editDeviceName.value)
+                    }
+                ) {
+                    Text("変更")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeviceNameRegisterDialog.value = false }) {
+                    Text("キャンセル")
+                }
+            }
+        )
+    }
+
+    if (showTaskRegisterDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showTaskRegisterDialog.value = false },
             title = {
                 Text("タスクの登録")
             },
@@ -214,7 +292,7 @@ fun MainScreen(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showRegisterDialog.value = false }) {
+                TextButton(onClick = { showTaskRegisterDialog.value = false }) {
                     Text("キャンセル")
                 }
             }
@@ -234,7 +312,6 @@ fun MainScreen(
                 TextButton(
                     onClick = {
                         mainViewModel.deleteTask(deleteTaskId.value)
-                        showDeleteDialog.value = false
                     }
                 ) {
                     Text("削除")
