@@ -48,7 +48,8 @@ class FcmTokenRepositoryImpl @Inject constructor(
         // TODO: 認証機能が実装されるまではダミーユーザーを使用
         try {
             Firebase.firestore.collection("users/dummy-user/devices")
-                .add(deviceData)
+                .document("device-info")
+                .set(deviceData)
                 .await()
 
             Log.d(TAG, "FCM token successfully sent to server: $newToken")

@@ -115,7 +115,7 @@ class MainViewModel @Inject constructor (
     fun updateDeviceName(newName: String) {
         viewModelScope.launch {
             try {
-                deviceSettingRepository.updateDeviceName(newName)
+                deviceSettingRepository.sendDeviceName(newName)
                 _deviceName.value = newName
                 showSnackbar("デバイス名が更新されました")
                 _updateDeviceNameEvent.emit(newName)

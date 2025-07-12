@@ -4,6 +4,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface DeviceSettingRepository {
     suspend fun getDeviceName(): String
-    suspend fun updateDeviceName(name: String)
+    suspend fun sendDeviceName(newDeviceName: String)
     val deviceNameFlow: Flow<String>
 }
