@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.ml_notify.domain.provider.DeviceIdProvider
 import com.example.ml_notify.domain.repository.FcmTokenRepository
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -24,6 +25,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 @Singleton
 class FcmTokenRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val deviceIdProvider: DeviceIdProvider
 ) : FcmTokenRepository {
 
     companion object {
@@ -45,10 +47,12 @@ class FcmTokenRepositoryImpl @Inject constructor(
 
         val deviceData = hashMapOf("deviceToken" to newToken)
 
+        val deviceId = deviceIdProvider.getDeviceId()
+
         // TODO: 認証機能が実装されるまではダミーユーザーを使用
         try {
             Firebase.firestore.collection("users/dummy-user/devices")
-                .document("device-info")
+                .document(deviceId)
                 .set(deviceData)
                 .await()
 

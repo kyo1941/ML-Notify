@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.ml_notify.domain.provider.DeviceIdProvider
 import com.example.ml_notify.domain.repository.DeviceSettingRepository
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
@@ -25,6 +26,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 @Singleton
 class DeviceSettingRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val deviceIdProvider: DeviceIdProvider
 ) : DeviceSettingRepository {
     companion object {
         private const val TAG = "DeviceSettingRepository"
@@ -50,10 +52,12 @@ class DeviceSettingRepositoryImpl @Inject constructor(
 
         val deviceNameData = hashMapOf("deviceName" to newDeviceName)
 
+        val deviceId = deviceIdProvider.getDeviceId()
+
         // TODO: 認証機能が実装されるまではダミーユーザーを使用
         try {
             Firebase.firestore.collection("users/dummy-user/devices")
-                .document("device-info")
+                .document(deviceId)
                 .set(deviceNameData, SetOptions.merge())
                 .await()
 
