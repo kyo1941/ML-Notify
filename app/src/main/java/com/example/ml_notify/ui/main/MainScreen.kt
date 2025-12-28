@@ -6,26 +6,22 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,8 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ml_notify.navigation.AppRoutes
-import com.example.ml_notify.ui.theme.button_bg_color
-import com.example.ml_notify.ui.theme.button_fg_color
 import com.example.ml_notify.ui.theme.border_color
 
 @Composable
@@ -77,6 +71,7 @@ fun MainScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { _ ->
         Column(
+            // TODO: scaffold の padding を使用して Edge-to-Edge に対応させる
             modifier = Modifier.padding(WindowInsets.systemBars.asPaddingValues())
         ) {
 
@@ -92,14 +87,14 @@ fun MainScreen(
                     .weight(1f)
                     .padding(horizontal = 8.dp)
             ) {
-                itemsIndexed(tasks, key = { _, task -> task.processId }) { index, task ->
+                itemsIndexed(tasks, key = { _, task -> task.id }) { index, task ->
                     Row(
                         modifier = Modifier
                             .padding(16.dp)
                             .clickable(
                                 onClickLabel = "タスク「${task.name}」の詳細を開く",
                                 onClick = {
-                                    navController.navigate("${AppRoutes.TASK_DETAIL_SCREEN}/${task.processId}")
+                                    navController.navigate("${AppRoutes.TASK_DETAIL_SCREEN}/${task.id}")
                                 }
                             ),
                         verticalAlignment = Alignment.CenterVertically,
@@ -115,7 +110,7 @@ fun MainScreen(
                                 .width(48.dp)
                                 .height(48.dp),
                             onClick = {
-                                deleteTaskId.value = task.processId
+                                deleteTaskId.value = task.id
                                 showDeleteDialog.value = true
                             }
                         ) {
@@ -137,88 +132,7 @@ fun MainScreen(
                     }
                 }
             }
-
-            Row(
-                Modifier.fillMaxWidth()
-            ) {
-                Spacer(Modifier.weight(1f))
-                FloatingActionButton(
-                    modifier = Modifier
-                        .width(56.dp)
-                        .height(56.dp),
-                    containerColor = button_bg_color,
-                    contentColor = button_fg_color,
-                    shape = RoundedCornerShape(24.dp),
-                    onClick = {
-                        showRegisterDialog.value = true
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(id = com.example.ml_notify.R.drawable.baseline_add_24),
-                        contentDescription = "登録",
-                        modifier = Modifier
-                            .width(24.dp)
-                            .height(24.dp)
-                    )
-                }
-                Spacer(Modifier.width(24.dp))
-            }
-            Spacer(Modifier.height(24.dp))
         }
-    }
-
-    if (showRegisterDialog.value) {
-        AlertDialog(
-            onDismissRequest = { showRegisterDialog.value = false },
-            title = {
-                Text("タスクの登録")
-            },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = taskName.value,
-                        onValueChange = { taskName.value = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        label = {
-                            Text(
-                                text = "タスク名",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    )
-
-                    Spacer(Modifier.height(24.dp))
-
-                    OutlinedTextField(
-                        // nullのときは空文字列で表示しておいて，その時はnullとして渡せるようにする
-                        value = taskMessage.value ?: "",
-                        onValueChange = { taskMessage.value = it.ifEmpty { null } },
-                        modifier = Modifier.fillMaxWidth(),
-                        label = {
-                            Text(
-                                text = "説明（任意）",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        mainViewModel.registerTask(taskName.value, taskMessage.value)
-                    },
-                    enabled = taskName.value.isNotBlank()
-                ) {
-                    Text("登録")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showRegisterDialog.value = false }) {
-                    Text("キャンセル")
-                }
-            }
-        )
     }
 
     if (showDeleteDialog.value) {

@@ -7,11 +7,10 @@ import com.example.ml_notify.model.TaskStatus
 @Entity(tableName = "tasks")
 data class TaskEntity (
     @PrimaryKey
-    val processId: String,
+    val id: String,
     val name: String,
     val status: TaskStatus,
-    val registeredAt: Long,
-    val startTime: Long?,
+    val startTime: Long,
     val finishTime: Long?,
     val message: String?
 )
