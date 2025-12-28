@@ -21,4 +21,12 @@ interface TaskDao {
 
     @Query("SELECT * FROM tasks")
     suspend fun getAllTasks(): List<TaskEntity>
+
+    /**
+     * 終了タスクの削除漏れを自動で削除する
+     *
+     * @param threshold 終了後から削除までの猶予時間
+     */
+    @Query("DELETE FROM tasks WHERE finishTime IS NOT NULL AND finishTime < :threshold")
+    suspend fun deleteOldFinishedTasks(threshold: Long)
 }

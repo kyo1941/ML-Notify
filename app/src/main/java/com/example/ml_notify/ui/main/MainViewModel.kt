@@ -28,6 +28,9 @@ class MainViewModel @Inject constructor (
 
     init {
         fetchTasks()
+        viewModelScope.launch {
+            taskRepository.deleteOldFinishedTasks(System.currentTimeMillis() - 3L * 24 * 60 * 60 * 1000) // 3日
+        }
     }
 
     private fun fetchTasks() {
