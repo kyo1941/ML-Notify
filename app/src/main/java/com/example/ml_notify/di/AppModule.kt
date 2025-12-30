@@ -8,6 +8,10 @@ import com.example.ml_notify.data.repository.TaskRepositoryImpl
 import com.example.ml_notify.domain.repository.TaskRepository
 import androidx.room.Room
 import android.content.Context
+import com.example.ml_notify.data.provider.DeviceIdProviderImpl
+import com.example.ml_notify.data.repository.DeviceRepositoryImpl
+import com.example.ml_notify.domain.provider.DeviceIdProvider
+import com.example.ml_notify.domain.repository.DeviceRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -19,15 +23,21 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AppModule {
-    // TaskDataHandler型にはTaskDataHandlerImplのインスタンスを注入する
     @Binds
     @Singleton
     abstract fun bindTaskDataHandler(taskDataHandlerImpl: TaskDataHandlerImpl): TaskDataHandler
 
-    // TaskRepository型にはTaskRepositoryImplのインスタンスを注入する
     @Binds
     @Singleton
     abstract fun bindTaskRepository(taskRepositoryImpl: TaskRepositoryImpl): TaskRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDeviceIdProvider(deviceIdProviderImpl: DeviceIdProviderImpl): DeviceIdProvider
+
+    @Binds
+    @Singleton
+    abstract fun bindDeviceRepository(deviceRepositoryImpl: DeviceRepositoryImpl): DeviceRepository
 }
 
 @Module
