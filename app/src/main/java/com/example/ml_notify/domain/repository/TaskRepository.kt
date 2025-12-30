@@ -8,4 +8,6 @@ interface TaskRepository {
     suspend fun deleteTaskById(processId: String)
     suspend fun getTaskById(processId: String): TaskEntity?
     suspend fun getAllTasks(): List<TaskEntity>
+
+    suspend fun deleteOldFinishedTasks(threshold: Long)
 }

@@ -39,7 +39,7 @@ fun TaskDetailScreen (
     val task by taskDetailViewModel.task.collectAsState()
     val message by taskDetailViewModel.message.collectAsState()
 
-    val timeText = task?.let { it ->
+    val timeText = task?.let {
         when(it.status) {
             TaskStatus.COMPLETED, TaskStatus.FAILED -> {
                 if(it.startTime != null && it.finishTime != null)
